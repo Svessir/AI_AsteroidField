@@ -1,13 +1,13 @@
 package entity;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
-import vector2d.Vector2D;
+import javax.imageio.ImageIO;
 
 public class Rocket extends MapObject{
 	
@@ -18,22 +18,43 @@ public class Rocket extends MapObject{
 	private double dx;
 	private double dy;
 	
+	// image
+	BufferedImage image;
+	
 	public Rocket(double x, double y, int width, int height, double dx, double dy, Rectangle boundary) {
 		super(x, y, width, height);
 		this.boundary = boundary;
 		this.dx = dx;
 		this.dy = dy;
+		
+		BufferedImage original;
+		try {
+			original = ImageIO.read(getClass().getResourceAsStream("/Sprites/rocket_cropped.png"));
+			image = new BufferedImage(height, width, original.getType());
+			Graphics2D g = image.createGraphics();
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			g.drawImage(original, 0, 0, height, width, 0, 0, original.getWidth(),original.getHeight(), null);
+			g.dispose();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void draw(Graphics2D g) {
-		Rectangle2D r = getRectangle();
+		/*Rectangle2D r = getRectangle();
 		double angle = Math.atan2(dy, dx);
 		AffineTransform at = AffineTransform.getRotateInstance(angle, x, y);
 		g.setColor(Color.RED);
 		//g.fill(r);
 		g.fill(at.createTransformedShape(r));
 		g.setColor(Color.BLUE);
-		g.fillOval((int)x, (int)y, 5, 5);
+		g.fillOval((int)x, (int)y, 5, 5);*/
+		double angle = Math.atan2(dy, dx);
+		AffineTransform at = new AffineTransform();
+		at.translate(x, y);
+		at.rotate(angle);
+		at.translate(-(height/2), -(width/2));
+		g.drawImage(image, at, null);
 	}
 	
 	public void rotate(double angle) {

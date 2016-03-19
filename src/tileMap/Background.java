@@ -20,7 +20,12 @@ public class Background {
 	public Background(String s, double ms)  {
 		
 		try{
-			image = ImageIO.read(getClass().getResourceAsStream(s));
+			BufferedImage original = ImageIO.read(getClass().getResourceAsStream(s));
+			image = new BufferedImage(320, 240, original.getType());
+			Graphics2D g = image.createGraphics();
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			g.drawImage(original, 0, 0, 320, 240, 0, 0, original.getWidth(),original.getHeight(), null);
+			g.dispose();
 			moveScale = ms;
 		}
 		catch(Exception e) {
@@ -45,6 +50,7 @@ public class Background {
 	
 	public void draw(Graphics2D g) {
 		g.drawImage(image, (int)x, (int)y, null);
+		
 		if(x < 0) {
 			g.drawImage(image, (int)x + GamePanel.WIDTH, (int)y, null);
 		}

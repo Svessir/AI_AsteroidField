@@ -19,7 +19,7 @@ public class PlayerBot implements Runnable{
 			//FakeSearch search = new FakeSearch(move);
 			//search.run();
 			while(true) {
-				System.out.println("bot: " + move.fake);
+				//System.out.println("bot: " + move.fake);
 				r.keyPress(KeyEvent.VK_UP);
 			}
 			

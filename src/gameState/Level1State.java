@@ -1,8 +1,6 @@
 package gameState;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
 import entity.Rocket;
@@ -18,7 +16,7 @@ public class Level1State extends GameState{
 	
 	public Level1State(GameStateManager gsm) {
 		this.gsm = gsm;
-		rocket = new Rocket(100, 150, 15, 30, 1, 0, gsm.boundaryRectangle);
+		rocket = new Rocket(100, 150, 30, 30, 1, 0, gsm.boundaryRectangle);
 		
 		try{
 			bg = new Background("/Background/space_background4.jpg", 1);
@@ -31,8 +29,8 @@ public class Level1State extends GameState{
 	
 	@Override
 	public void init() {
-		Thread thread = new Thread(new PlayerBot());
-		thread.start();
+		//Thread thread = new Thread(new PlayerBot());
+		//thread.start();
 	}
 
 	@Override

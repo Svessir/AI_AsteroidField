@@ -33,7 +33,7 @@ public class FakeSearch implements Runnable {
 				}
 			}
 			move.fake++;
-			System.out.println("search: " + move.fake);
+			//System.out.println("search: " + move.fake);
 		}
 	}
 
