@@ -3,6 +3,10 @@ package gameState;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import entity.Results;
+import entity.Rocket;
+import entity.Target;
+
 public class GameStateManager {
 	
 	private ArrayList<GameState> gameStates;
@@ -10,7 +14,8 @@ public class GameStateManager {
 	public Rectangle boundaryRectangle;
 	
 	public static final int MENUSTATE = 0;
-	public static final int LEVEL1STATE = 1;
+	public static final int RESULTSTATE = 1;
+	public static final int LEVEL1STATE = 2;
 	
 	public GameStateManager(Rectangle boundaryRectangle) {
 		this.boundaryRectangle = boundaryRectangle;
@@ -18,10 +23,18 @@ public class GameStateManager {
 		
 		currentState = MENUSTATE;
 		gameStates.add(new MenuState(this));
-		gameStates.add(new Level1State(this));
+		gameStates.add(new ResultState(this));
+		gameStates.add(new Level1State(this, new Rocket(100, 150, 1, 0, boundaryRectangle), new Target(50, 50)));
 	}
 	
 	public void setState(int state) {
+		if(state == RESULTSTATE) {
+			Results r = gameStates.get(currentState).getResults();
+			gameStates.get(currentState).init();
+			currentState = state;
+			gameStates.get(currentState).init(r);
+			return;
+		}
 		currentState = state;
 		gameStates.get(currentState).init();
 	}
@@ -40,5 +53,9 @@ public class GameStateManager {
 	
 	public void keyReleased(int k) {
 		gameStates.get(currentState).keyReleased(k);
+	}
+	
+	public boolean isGameOver() {
+		return gameStates.get(currentState).isGameOver();
 	}
 }

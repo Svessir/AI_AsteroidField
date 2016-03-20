@@ -1,8 +1,9 @@
 package entity;
 
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-public class MapObject {
+public abstract class MapObject {
 	// position
 	protected double x;
 	protected double y;
@@ -18,9 +19,19 @@ public class MapObject {
 		this.height = height;
 	}
 	
-	public Rectangle getRectangle() {
-		return new Rectangle((int)x - (height/2), (int)y - (width/2), height, width);
+	public abstract Rectangle getRectangle();
+	
+	public abstract void draw(Graphics2D g);
+	
+	public boolean collides(MapObject o) {
+		return o.getRectangle().contains(x, y);
 	}
 	
-	//public void draw() {}
+	public int getWidth() { return width; }
+	
+	public int getHeight() { return height; }
+	
+	public double getX() { return x; }
+	
+	public double getY() { return y; }
 }

@@ -24,8 +24,8 @@ public class Rocket extends MapObject{
 	// fuel
 	double fuel_consumption = 0;
 	
-	public Rocket(double x, double y, int width, int height, double dx, double dy, Rectangle boundary) {
-		super(x, y, width, height);
+	public Rocket(double x, double y, double dx, double dy, Rectangle boundary) {
+		super(x, y, 30, 30);
 		this.boundary = boundary;
 		this.dx = dx;
 		this.dy = dy;
@@ -74,15 +74,9 @@ public class Rocket extends MapObject{
 			y = newY;
 		}
 	}
-	/*
-	public static void main(String[] args) {
-		double angle1 = 90;
-		angle1 = Math.toRadians(angle1);
-		double dx = 0, dy = 1;
-		double oldDx = dx;
-		dx = (dx * Math.cos(angle1) - dy * Math.sin(angle1));
-		dy = (oldDx * Math.sin(angle1) + dy * Math.cos(angle1));
-		double angle2 = Math.atan2(dy, dx);
-		System.out.println(angle2);
-	}*/
+
+	@Override
+	public Rectangle getRectangle()  {
+		return new Rectangle((int)x - (height/2), (int)y - (width/2), height, width);
+	}
 }

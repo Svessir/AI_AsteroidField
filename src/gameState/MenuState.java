@@ -3,6 +3,7 @@ package gameState;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+import entity.Results;
 import entity.Rocket;
 import robot.PlayerBot;
 import tileMap.Background;
@@ -24,26 +25,25 @@ public class MenuState extends GameState {
 	private Font font;
 	
 	public MenuState(GameStateManager gsm) {
-		this.gsm = gsm;
+		super(gsm);
+		titleColor = new Color(128, 0, 0);
+		titleFont = new Font("Century Gothic", Font.PLAIN, 28);
+		font = new Font("Arial", Font.PLAIN, 12);
 		
 		try{
-			bg = new Background("/Background/space_background4.jpg", 0.1);
+			bg = new Background("/Background/space_background4.jpg", 1);
 			bg.setVector(-0.1, 0);
-			
-			titleColor = new Color(128, 0, 0);
-			titleFont = new Font("Century Gothic", Font.PLAIN, 28);
-			font = new Font("Arial", Font.PLAIN, 12);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
-		//Thread thread = new Thread(new PlayerBot());
-		//thread.start();
 	}
 
 	@Override
 	public void init() {}
+	
+	@Override
+	public void init(Results r) {}
 
 	@Override
 	public void update() {
@@ -97,4 +97,12 @@ public class MenuState extends GameState {
 	@Override
 	public void keyReleased(int k) {
 	}
+
+	@Override
+	public boolean isGameOver() {
+		return false;
+	}
+
+	@Override
+	public Results getResults() { return null; }
 }

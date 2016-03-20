@@ -71,6 +71,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			
 			wait = targetTime - (elapsed / 1000000);
 			
+			if(gsm.isGameOver()) {
+				gsm.setState(GameStateManager.RESULTSTATE);
+			}
+			
 			try {
 				Thread.sleep(wait);
 			}
