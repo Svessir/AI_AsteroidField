@@ -52,7 +52,8 @@ public class Level1State extends GameState{
 		else if(k == KeyEvent.VK_LEFT)
 			rocket.rotate(-SINGLE_ROTATION);
 		else if(k == KeyEvent.VK_UP)
-			rocket.move();
+			rocket.thrust();
+		else {/* Move by Gravity */}
 	}
 
 	@Override

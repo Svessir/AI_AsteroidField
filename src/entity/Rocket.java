@@ -21,6 +21,9 @@ public class Rocket extends MapObject{
 	// image
 	BufferedImage image;
 	
+	// fuel
+	double fuel_consumption = 0;
+	
 	public Rocket(double x, double y, int width, int height, double dx, double dy, Rectangle boundary) {
 		super(x, y, width, height);
 		this.boundary = boundary;
@@ -63,7 +66,7 @@ public class Rocket extends MapObject{
 		dy = oldDx * Math.sin(angle) + dy * Math.cos(angle);
 	}
 	
-	public void move() {
+	public void thrust() {
 		double newX = x + dx;
 		double newY = y + dy;
 		if(boundary.contains(newX, newY)) {
