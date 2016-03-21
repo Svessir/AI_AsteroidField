@@ -21,8 +21,8 @@ public class Level1State extends GameState{
 	private double targetInitialY;
 	
 	
-	public Level1State(GameStateManager gsm, Rocket r, Target t) {
-		super(gsm);
+	public Level1State(GameStateManager gsm, String levelName ,Rocket r, Target t) {
+		super(gsm, levelName);
 		rocket = r;
 		target = t;
 		rocketInitialX = r.getX();
@@ -30,7 +30,7 @@ public class Level1State extends GameState{
 		targetInitialX = t.getX();
 		targetInitialY = t.getY();
 		
-		shortestDistance = calculateDistance();
+		shortestDistance = rocket.calculateDistance(rocket.getX(), rocket.getY(), target.getX(), target.getY());
 		
 		try{
 			bg = new Background("/Background/space_background4.jpg", 1);
@@ -45,12 +45,12 @@ public class Level1State extends GameState{
 	public void init() {
 		rocket = new Rocket(rocketInitialX, rocketInitialY, 1, 0, gsm.boundaryRectangle);
 		target = new Target(targetInitialX, targetInitialY);
-		//Thread thread = new Thread(new PlayerBot());
-		//thread.start();
+		
+		if(isAI) {
+			Thread thread = new Thread(new PlayerBot());
+			thread.start();
+		}
 	}
-	
-	@Override
-	public void init(Results r) {}
 
 	@Override
 	public void update() {
@@ -95,13 +95,8 @@ public class Level1State extends GameState{
 				150, 
 				100,
 				shortestDistance,
-				0,
-				0);
-	}
-	
-	private double calculateDistance() {
-		double xDist = Math.max(rocket.getX(), target.getX()) - Math.min(rocket.getX(), target.getX());
-		double yDist = Math.max(rocket.getY(), target.getY()) - Math.min(rocket.getY(), target.getY());
-		return Math.round(Math.sqrt(xDist * xDist + yDist * yDist));
+				rocket.getDistanceTraveled()
+				+ rocket.calculateDistance(rocket.getX(), rocket.getY(), target.getX(), target.getY()),
+				rocket.getFuelSpent());
 	}
 }

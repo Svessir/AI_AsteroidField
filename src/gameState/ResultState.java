@@ -9,20 +9,16 @@ public class ResultState extends GameState {
 	Results results;
 	
 	public ResultState(GameStateManager gsm) {
-		super(gsm);
+		super(gsm, "");
 	}
 
 	@Override
 	public void init() {}
 	
-	@Override
 	public void init(Results r) { results = r; }
 
 	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void update() {}
 
 	@Override
 	public void draw(Graphics2D g) {

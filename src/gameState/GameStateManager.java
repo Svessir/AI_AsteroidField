@@ -11,11 +11,13 @@ public class GameStateManager {
 	
 	private ArrayList<GameState> gameStates;
 	private int currentState;
+	private boolean isAI = false;
 	public Rectangle boundaryRectangle;
 	
 	public static final int MENUSTATE = 0;
 	public static final int RESULTSTATE = 1;
-	public static final int LEVEL1STATE = 2;
+	public static final int LEVELSELECTIONSTATE = 2;
+	public static final int LEVEL1STATE = 3;
 	
 	public GameStateManager(Rectangle boundaryRectangle) {
 		this.boundaryRectangle = boundaryRectangle;
@@ -24,7 +26,8 @@ public class GameStateManager {
 		currentState = MENUSTATE;
 		gameStates.add(new MenuState(this));
 		gameStates.add(new ResultState(this));
-		gameStates.add(new Level1State(this, new Rocket(100, 150, 1, 0, boundaryRectangle), new Target(50, 50)));
+		gameStates.add(new LevelSelectionState(this));
+		gameStates.add(new Level1State(this, "Level 1", new Rocket(100, 150, 1, 0, boundaryRectangle), new Target(50, 50)));
 	}
 	
 	public void setState(int state) {
@@ -32,11 +35,15 @@ public class GameStateManager {
 			Results r = gameStates.get(currentState).getResults();
 			gameStates.get(currentState).init();
 			currentState = state;
-			gameStates.get(currentState).init(r);
+			ResultState s = (ResultState)gameStates.get(currentState);
+			s.init(r);
 			return;
 		}
 		currentState = state;
-		gameStates.get(currentState).init();
+		
+		GameState gameState = gameStates.get(currentState);
+		gameState.setAI(isAI);
+		gameState.init();
 	}
 	
 	public void update() {
@@ -58,4 +65,17 @@ public class GameStateManager {
 	public boolean isGameOver() {
 		return gameStates.get(currentState).isGameOver();
 	}
+	
+	public ArrayList<String> getLevelNames() {
+		ArrayList<String> names = new ArrayList<>();
+		for(int i = 0; i < gameStates.size(); i++) {
+			if(i != LEVEL1STATE && i != MENUSTATE)
+				continue;
+			GameState s = gameStates.get(i);
+			names.add(s.getName());
+		}
+		return names;
+	}
+	
+	public void setAi(boolean isAI) { this.isAI = isAI; }
 }

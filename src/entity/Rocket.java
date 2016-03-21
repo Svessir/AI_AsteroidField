@@ -24,6 +24,9 @@ public class Rocket extends MapObject{
 	// fuel
 	double fuel_consumption = 0;
 	
+	// travel distance
+	double distanceTraveled = 0;
+	
 	public Rocket(double x, double y, double dx, double dy, Rectangle boundary) {
 		super(x, y, 30, 30);
 		this.boundary = boundary;
@@ -70,6 +73,8 @@ public class Rocket extends MapObject{
 		double newX = x + dx;
 		double newY = y + dy;
 		if(boundary.contains(newX, newY)) {
+			fuel_consumption += 0.25;
+			distanceTraveled += calculateDistance(x, y, newX, newY);
 			x = newX;
 			y = newY;
 		}
@@ -78,5 +83,19 @@ public class Rocket extends MapObject{
 	@Override
 	public Rectangle getRectangle()  {
 		return new Rectangle((int)x - (height/2), (int)y - (width/2), height, width);
+	}
+	
+	public double getFuelSpent() {
+		return fuel_consumption;
+	}
+	
+	public double getDistanceTraveled() {
+		return distanceTraveled;
+	}
+	
+	public double calculateDistance(double oldX, double oldY, double newX, double newY) {
+		double xDist = Math.max(oldX, newX) - Math.min(oldX, newX);
+		double yDist = Math.max(oldY, newY) - Math.min(oldY, newY);
+		return Math.round(Math.sqrt(xDist * xDist + yDist * yDist));
 	}
 }

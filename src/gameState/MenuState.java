@@ -25,7 +25,7 @@ public class MenuState extends GameState {
 	private Font font;
 	
 	public MenuState(GameStateManager gsm) {
-		super(gsm);
+		super(gsm, "Back");
 		titleColor = new Color(128, 0, 0);
 		titleFont = new Font("Century Gothic", Font.PLAIN, 28);
 		font = new Font("Arial", Font.PLAIN, 12);
@@ -41,9 +41,6 @@ public class MenuState extends GameState {
 
 	@Override
 	public void init() {}
-	
-	@Override
-	public void init(Results r) {}
 
 	@Override
 	public void update() {
@@ -71,10 +68,12 @@ public class MenuState extends GameState {
 	
 	private void select() {
 		if(currentChoice == 0) {
-			gsm.setState(GameStateManager.LEVEL1STATE);
+			gsm.setAi(false);
+			gsm.setState(GameStateManager.LEVELSELECTIONSTATE);
 		}
 		if(currentChoice == 1) {
-			// ai start
+			gsm.setAi(true);
+			gsm.setState(GameStateManager.LEVELSELECTIONSTATE);
 		}
 		if(currentChoice == 2) {
 			System.exit(0);
@@ -95,13 +94,10 @@ public class MenuState extends GameState {
 	}
 
 	@Override
-	public void keyReleased(int k) {
-	}
+	public void keyReleased(int k) {}
 
 	@Override
-	public boolean isGameOver() {
-		return false;
-	}
+	public boolean isGameOver() { return false; }
 
 	@Override
 	public Results getResults() { return null; }
