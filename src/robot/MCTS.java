@@ -92,7 +92,7 @@ public class MCTS implements Runnable {
 	
 	private long searchTimeMillis = 500;
 	private long startTime;
-	private long elapsedTime;
+	private int maxDepth = 30;
 	private World world;
 	private Node root;
 	private PlayerBot.Move move;
@@ -115,31 +115,31 @@ public class MCTS implements Runnable {
 		while(true) {
 			Action newAction = search();
 			move.action = newAction;
+			// fix root
 		}
 	}
 	
 	public Action search() {
-		Random rand = new Random();
-		int number = rand.nextInt(4);
-		Action action = Action.THRUST;
-		if(number == 0)
-			action = Action.ROTATE_LEFT;
-		else if(number == 1)
-			action = Action.ROTATE_RIGHT;
-		else if(number == 2)
-			action = Action.THRUST;
+		startTime = System.currentTimeMillis();
 		
-		try {
-			Thread.sleep(searchTimeMillis);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		while(isTime()) {
+			
+			// selectedNode
+			// expansion
+			// simulation
+			// back propagation
+			
 		}
 		
-		return action;
+		return null;
+	}
+	
+	private boolean isTime() {
+		return System.currentTimeMillis()- startTime < searchTimeMillis;
 	}
 	
 	// selection
 	// expansion
-	// play out
+	// simulation
 	// back propagation
 }

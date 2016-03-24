@@ -67,11 +67,11 @@ public class Rocket extends MapObject{
 	}
 	
 	public void rotateLeft() {
-		rotate(SINGLE_ROTATION);
+		rotate(-SINGLE_ROTATION);
 	}
 	
 	public void rotateRight() {
-		rotate(-SINGLE_ROTATION);
+		rotate(SINGLE_ROTATION);
 	}
 	
 	private void rotate(double angle) {
