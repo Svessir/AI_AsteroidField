@@ -132,7 +132,6 @@ public class MCTS implements Runnable {
 		try {
 			Thread.sleep(searchTimeMillis);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -27,7 +27,7 @@ public class Rocket extends MapObject{
 	// travel distance
 	double distanceTraveled = 0;
 	
-	//
+	// single rotation
 	private final double SINGLE_ROTATION = Math.toRadians(1);
 	
 	public Rocket(double x, double y, double dx, double dy, Rectangle boundary) {
