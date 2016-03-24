@@ -4,8 +4,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 import entity.Results;
-import entity.Rocket;
-import robot.PlayerBot;
 import tileMap.Background;
 
 public class MenuState extends GameState {

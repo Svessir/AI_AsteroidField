@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import entity.Results;
 import entity.Rocket;
 import entity.Target;
+import robot.GameInfo;
 import robot.PlayerBot;
 import tileMap.Background;
 
@@ -14,7 +15,6 @@ public class Level1State extends GameState{
 	private Rocket rocket;
 	private Target target;
 	private double shortestDistance;
-	private final double SINGLE_ROTATION = Math.toRadians(2);
 	private double rocketInitialX;
 	private double rocketInitialY;
 	private double targetInitialX;
@@ -47,7 +47,18 @@ public class Level1State extends GameState{
 		target = new Target(targetInitialX, targetInitialY);
 		
 		if(isAI) {
-			Thread thread = new Thread(new PlayerBot());
+			GameInfo info = new GameInfo
+			(
+				rocket.getX(), 
+				rocket.getDy(), 
+				rocket.getDx(), 
+				rocket.getDy(), 
+				target.getX(), 
+				target.getY(), 
+				rocket.getFuelSpent()
+			);
+			
+			Thread thread = new Thread(new PlayerBot(info));
 			thread.start();
 		}
 	}
@@ -70,9 +81,9 @@ public class Level1State extends GameState{
 	@Override
 	public void keyPressed(int k) {
 		if(k == KeyEvent.VK_RIGHT)
-			rocket.rotate(SINGLE_ROTATION);
+			rocket.rotateRight();
 		else if(k == KeyEvent.VK_LEFT)
-			rocket.rotate(-SINGLE_ROTATION);
+			rocket.rotateLeft();
 		else if(k == KeyEvent.VK_UP)
 			rocket.thrust();
 		else {/* Move by Gravity */}

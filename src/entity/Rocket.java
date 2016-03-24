@@ -27,6 +27,9 @@ public class Rocket extends MapObject{
 	// travel distance
 	double distanceTraveled = 0;
 	
+	//
+	private final double SINGLE_ROTATION = Math.toRadians(1);
+	
 	public Rocket(double x, double y, double dx, double dy, Rectangle boundary) {
 		super(x, y, 30, 30);
 		this.boundary = boundary;
@@ -63,7 +66,15 @@ public class Rocket extends MapObject{
 		g.drawImage(image, at, null);
 	}
 	
-	public void rotate(double angle) {
+	public void rotateLeft() {
+		rotate(SINGLE_ROTATION);
+	}
+	
+	public void rotateRight() {
+		rotate(-SINGLE_ROTATION);
+	}
+	
+	private void rotate(double angle) {
 		double oldDx = dx;
 		dx = dx * Math.cos(angle) - dy * Math.sin(angle);
 		dy = oldDx * Math.sin(angle) + dy * Math.cos(angle);
@@ -79,6 +90,10 @@ public class Rocket extends MapObject{
 			y = newY;
 		}
 	}
+	
+	public double getDx() { return dx; }
+	
+	public double getDy() { return dy; }
 
 	@Override
 	public Rectangle getRectangle()  {
