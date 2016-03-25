@@ -79,7 +79,7 @@ public class Level1State extends GameState{
 		bg.draw(g);
 		target.draw(g);
 		rocket.draw(g);
-		rocket.print();
+		//rocket.print();
 	}
 
 	@Override

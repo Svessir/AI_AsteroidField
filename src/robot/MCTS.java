@@ -187,11 +187,16 @@ public class MCTS implements Runnable {
 			for(int i = 0; i < depth; i++)
 				currentState.playAction(currentState.getRandomLegalAction());
 			
-			return currentState.evaluate(); 
+			eval = currentState.evaluate();
+			return eval;
 		}
 		
 		public void update(double value) {
-			eval = value;
+			double sum = 0;
+			for(Node child : children) {
+				sum += child.eval;
+			}
+			eval = sum/children.size();
 		}
 		
 		public Node bestChild() { return root.selectChild(); }
@@ -262,7 +267,7 @@ public class MCTS implements Runnable {
 				n.update(value);
 			}
 		}
-		//System.out.println(numberE);
+		System.out.println(numberE);
 		root = root.bestChild();
 		root.state.print();
 	}
