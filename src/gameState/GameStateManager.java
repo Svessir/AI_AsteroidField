@@ -27,7 +27,7 @@ public class GameStateManager {
 		gameStates.add(new MenuState(this));
 		gameStates.add(new ResultState(this));
 		gameStates.add(new LevelSelectionState(this));
-		gameStates.add(new Level1State(this, "Level 1", new Rocket(100, 150, 1, 0, boundaryRectangle), new Target(50, 50)));
+		gameStates.add(new Level1State(this, "Level 1", new Rocket(200, 200, 1, 0, boundaryRectangle), new Target(20, 20)));
 	}
 	
 	public void setState(int state) {

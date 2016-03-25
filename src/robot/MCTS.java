@@ -77,7 +77,7 @@ public class MCTS implements Runnable {
 		}
 		
 		public double evaluate() { 
-			return 112.0/(Helper.calculateDistance(x, y, world.target_x, world.target_y) + fuelSpent); 
+			return (initialDistance - Helper.calculateDistance(x, y, world.target_x, world.target_y))/fuelSpent; 
 		}
 		
 		public Action getRandomLegalAction() {
@@ -206,7 +206,8 @@ public class MCTS implements Runnable {
 	
 	private long searchTimeMillis;
 	private long startTime;
-	private int maxDepth = 30;
+	private double initialDistance;
+	private int maxDepth = 100;
 	private World world;
 	private TransitionModel transitionModel;
 	private Node root;
@@ -235,6 +236,8 @@ public class MCTS implements Runnable {
 		this.searchTimeMillis = searchTimeMillis;
 		
 		this.move = move;
+		
+		initialDistance = Helper.calculateDistance(info.rocketx, info.rockety, info.targetx, info.targety);
 	}
 
 	@Override
@@ -269,7 +272,7 @@ public class MCTS implements Runnable {
 		}
 		System.out.println(numberE);
 		root = root.bestChild();
-		root.state.print();
+		//root.state.print();
 	}
 	
 	private boolean isTime() {
