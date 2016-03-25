@@ -17,10 +17,19 @@ public class PlayerBot implements Runnable {
 	private Move move;
 	private Thread thread;
 	private Robot robot;
+	private long searchTimeMillis = 500;
+	private long wait = 25;
 	
 	public PlayerBot( GameInfo info ) {
 		move = new Move(MCTS.Action.NOOP);
-		thread = new Thread(new MCTS(info, move));
+		TransitionModel tm = new TransitionModel
+		(
+			info.singleRotation, 
+			info.singleThrustFuel, 
+			searchTimeMillis/wait
+		);
+		
+		thread = new Thread(new MCTS(info, tm, searchTimeMillis, move));
 		
 		try {
 			robot = new Robot();
@@ -42,7 +51,7 @@ public class PlayerBot implements Runnable {
 				else if(move.action == MCTS.Action.THRUST)
 					robot.keyPress(KeyEvent.VK_UP);
 				
-				Thread.sleep(25);
+				Thread.sleep(wait);
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

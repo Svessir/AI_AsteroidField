@@ -50,12 +50,15 @@ public class Level1State extends GameState{
 			GameInfo info = new GameInfo
 			(
 				rocket.getX(), 
-				rocket.getDy(), 
+				rocket.getY(), 
 				rocket.getDx(), 
 				rocket.getDy(), 
 				target.getX(), 
 				target.getY(), 
-				rocket.getFuelSpent()
+				rocket.getFuelSpent(),
+				rocket.getSingleRotation(),
+				rocket.getFuelConsumptionForSingleThrust(),
+				gsm.boundaryRectangle
 			);
 			
 			Thread thread = new Thread(new PlayerBot(info));
@@ -76,6 +79,7 @@ public class Level1State extends GameState{
 		bg.draw(g);
 		target.draw(g);
 		rocket.draw(g);
+		rocket.print();
 	}
 
 	@Override

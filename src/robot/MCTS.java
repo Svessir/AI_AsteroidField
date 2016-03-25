@@ -1,9 +1,12 @@
 package robot;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
+import utility.Helper;
 
 
 public class MCTS implements Runnable {
@@ -17,28 +20,12 @@ public class MCTS implements Runnable {
 	private class World {
 		public final double target_x;
 		public final double target_y;
+		public final Rectangle2D boundary;
 		
-		public World(double target_x, double target_y) {
+		public World(double target_x, double target_y, Rectangle2D boundary) {
 			this.target_x = target_x;
 			this.target_y = target_y;
-		}
-	}
-	
-	/**
-	 * TransitionModel - Includes information of how the rocket moves.
-	 * SINGLE_ROTATION - Defines how many radians the rocket rotates for each rotation action
-	 * MOVEMENT_DELTA - Defines how far the rocket moves for each movement action (thrust or gravitational pull)
-	 * FUEL_PER_THRUST - Defines how much fuel is consumed for each thrust action
-	 */
-	public class TransitionModel {
-		public final double SINGLE_ROTATION;
-		public final double MOVEMENT_DELTA;
-		public final double FUEL_PER_THRUST;
-		
-		public TransitionModel(double singleRotation, double movement_delta, double fuelPerThrust) {
-			SINGLE_ROTATION = singleRotation;
-			MOVEMENT_DELTA = movement_delta;
-			FUEL_PER_THRUST = fuelPerThrust;
+			this.boundary = boundary;
 		}
 	}
 	
@@ -84,14 +71,67 @@ public class MCTS implements Runnable {
 		}
 		
 		public State getSuccessorState(Action action) {
-			return null;
+			State successor = new State(this);
+			successor.playAction(action);
+			return successor;
 		}
 		
-		public double evaluate() { return 0; }
+		public double evaluate() { 
+			return 112.0/(Helper.calculateDistance(x, y, world.target_x, world.target_y) + fuelSpent); 
+		}
 		
-		public Action getRandomLegalAction() { return null; }
+		public Action getRandomLegalAction() {
+			int number = rand.nextInt(3);
+			
+			if(number == 0)
+				return Action.THRUST;
+			if(number == 1)
+				return Action.ROTATE_RIGHT;
+			if(number == 2)
+				return Action.ROTATE_LEFT;
+			
+			return Action.NOOP;
+		}
 		
-		public void playAction( Action action ) {}
+		public void playAction( Action action ) {
+			
+			if(action == Action.ROTATE_LEFT)
+				rotate_left();
+			else if(action == Action.ROTATE_RIGHT)
+				rotate_right();
+			else if(action == Action.THRUST)
+				thrust();
+			
+			// else move by gravity pull
+		}
+		
+		private void rotate_left() {
+			rotate(-transitionModel.SINGLE_ROTATION);
+		}
+		
+		private void rotate_right() {
+			rotate(transitionModel.SINGLE_ROTATION);
+		}
+		
+		private void rotate(double angle) {
+			double oldDx = dx;
+			dx = Helper.rotateX(angle, dx, dy);
+			dy = Helper.rotateY(angle, oldDx, dy);
+		}
+		
+		private void thrust() {
+			fuelSpent += transitionModel.FUEL_PER_THRUST;
+			move(dx, dy);
+		}
+		
+		private void move(double dx, double dy) {
+			x += dx;
+			y += dy;
+		}
+		
+		private void print() {
+			System.out.println("x: " + x + " y: " + y);
+		}
 	}
 	
 	/**
@@ -123,7 +163,7 @@ public class MCTS implements Runnable {
 			for(Node child : children) {
 				if(child.eval > bestEval) {
 					best = child;
-					bestEval = eval;
+					bestEval = child.eval;
 				}
 			}
 			
@@ -150,29 +190,44 @@ public class MCTS implements Runnable {
 			return currentState.evaluate(); 
 		}
 		
-		public void update(double value) {}
+		public void update(double value) {
+			eval = value;
+		}
 		
 		public Node bestChild() { return root.selectChild(); }
 	}
 	
 	//private class OutOfTimeException extends RuntimeException {}
 	
-	private long searchTimeMillis = 500;
+	private long searchTimeMillis;
 	private long startTime;
 	private int maxDepth = 30;
 	private World world;
+	private TransitionModel transitionModel;
 	private Node root;
 	private PlayerBot.Move move;
 	private Random rand = new Random();
 	
-	public MCTS(GameInfo info, PlayerBot.Move move) {
+	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, PlayerBot.Move move) {
 		
 		// static objects
-		world = new World(info.targetx, info.targety);
+		world = new World(info.targetx, info.targety, info.boundaryRect);
 		
 		// initializing root
 		root = new Node(
-				new State(info.rocketx, info.rockety, info.rocketdx, info.rocketdy, info.fuelSpent), null);
+				new State
+				(
+					info.rocketx, 
+					info.rockety,
+					info.rocketdx * tm.NUMBER_OF_ACTIONS_PER_TRANSITION,
+					info.rocketdy * tm.NUMBER_OF_ACTIONS_PER_TRANSITION,
+					info.fuelSpent
+				),
+				null);
+		
+		transitionModel = tm;
+		
+		this.searchTimeMillis = searchTimeMillis;
 		
 		this.move = move;
 	}
@@ -187,7 +242,7 @@ public class MCTS implements Runnable {
 	
 	public void search() {
 		startTime = System.currentTimeMillis();
-		
+		int numberE = 0;
 		while(isTime()) {
 			List<Node> visited = new LinkedList<Node>();
 			
@@ -196,17 +251,20 @@ public class MCTS implements Runnable {
 			
 			// expansion
 			node = node.expand();
+			numberE++;
 			
 			// simulation
 			double value = node.simulate(maxDepth);
+			//System.out.println(value);
 			
 			// back propagation
 			for(Node n : visited) {
 				n.update(value);
 			}
 		}
-		
+		//System.out.println(numberE);
 		root = root.bestChild();
+		root.state.print();
 	}
 	
 	private boolean isTime() {

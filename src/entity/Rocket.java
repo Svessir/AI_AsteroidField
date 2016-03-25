@@ -9,6 +9,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import utility.Helper;
+
 public class Rocket extends MapObject{
 	
 	// boundary rectangle defines the area where the rocket can travel
@@ -30,6 +32,8 @@ public class Rocket extends MapObject{
 	// single rotation
 	private final double SINGLE_ROTATION = Math.toRadians(1);
 	
+	private final double fuelForThrust = 0.25;
+	
 	public Rocket(double x, double y, double dx, double dy, Rectangle boundary) {
 		super(x, y, 30, 30);
 		this.boundary = boundary;
@@ -50,14 +54,6 @@ public class Rocket extends MapObject{
 	}
 	
 	public void draw(Graphics2D g) {
-		/*Rectangle2D r = getRectangle();
-		double angle = Math.atan2(dy, dx);
-		AffineTransform at = AffineTransform.getRotateInstance(angle, x, y);
-		g.setColor(Color.RED);
-		//g.fill(r);
-		g.fill(at.createTransformedShape(r));
-		g.setColor(Color.BLUE);
-		g.fillOval((int)x, (int)y, 5, 5);*/
 		double angle = Math.atan2(dy, dx);
 		AffineTransform at = new AffineTransform();
 		at.translate(x, y);
@@ -76,15 +72,17 @@ public class Rocket extends MapObject{
 	
 	private void rotate(double angle) {
 		double oldDx = dx;
-		dx = dx * Math.cos(angle) - dy * Math.sin(angle);
-		dy = oldDx * Math.sin(angle) + dy * Math.cos(angle);
+		/*dx = dx * Math.cos(angle) - dy * Math.sin(angle);
+		dy = oldDx * Math.sin(angle) + dy * Math.cos(angle);*/
+		dx = Helper.rotateX(angle, dx, dy);
+		dy = Helper.rotateY(angle, oldDx, dy);
 	}
 	
 	public void thrust() {
 		double newX = x + dx;
 		double newY = y + dy;
 		if(boundary.contains(newX, newY)) {
-			fuel_consumption += 0.25;
+			fuel_consumption += fuelForThrust;
 			distanceTraveled += calculateDistance(x, y, newX, newY);
 			x = newX;
 			y = newY;
@@ -94,6 +92,10 @@ public class Rocket extends MapObject{
 	public double getDx() { return dx; }
 	
 	public double getDy() { return dy; }
+	
+	public double getSingleRotation() { return SINGLE_ROTATION; }
+	
+	public double getFuelConsumptionForSingleThrust() { return fuelForThrust; }
 
 	@Override
 	public Rectangle getRectangle()  {
@@ -113,4 +115,8 @@ public class Rocket extends MapObject{
 		double yDist = Math.max(oldY, newY) - Math.min(oldY, newY);
 		return Math.round(Math.sqrt(xDist * xDist + yDist * yDist));
 	}
+	
+	public void print() {
+		System.out.println("rocket =  x: " + x + " y: " + y);
+	} 
 }
