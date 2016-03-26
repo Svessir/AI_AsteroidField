@@ -50,4 +50,10 @@ public class ResultState extends GameState {
 	@Override
 	public Results getResults() { return null; }
 
+	@Override
+	public void turnOffAi() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

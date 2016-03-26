@@ -27,13 +27,14 @@ public class GameStateManager {
 		gameStates.add(new MenuState(this));
 		gameStates.add(new ResultState(this));
 		gameStates.add(new LevelSelectionState(this));
-		gameStates.add(new Level1State(this, "Level 1", new Rocket(200, 200, 1, 0, boundaryRectangle), new Target(20, 20)));
+		gameStates.add(new Level1State(this, "Level 1", new Rocket(20, 20, 1, 0, boundaryRectangle), new Target(100, 20)));
 	}
 	
 	public void setState(int state) {
 		if(state == RESULTSTATE) {
+			gameStates.get(currentState).turnOffAi();
 			Results r = gameStates.get(currentState).getResults();
-			gameStates.get(currentState).init();
+			//gameStates.get(currentState).init();
 			currentState = state;
 			ResultState s = (ResultState)gameStates.get(currentState);
 			s.init(r);

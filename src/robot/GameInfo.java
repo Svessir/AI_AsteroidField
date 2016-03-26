@@ -13,6 +13,7 @@ public class GameInfo {
 	public double singleRotation;
 	public double singleThrustFuel;
 	public Rectangle2D boundaryRect;
+	public Rectangle2D targetRect;
 	
 	// public ArrayList of asteroids
 	
@@ -26,7 +27,8 @@ public class GameInfo {
 			double fuelSpent,
 			double singleRotation,
 			double singleThrustFuel,
-			Rectangle2D boundary) {
+			Rectangle2D boundary,
+			Rectangle2D targetRect ) {
 		rocketx = rx;
 		rockety = ry;
 		rocketdx = rdx;
@@ -37,5 +39,6 @@ public class GameInfo {
 		this.singleRotation = singleRotation;
 		this.singleThrustFuel = singleThrustFuel;
 		boundaryRect = boundary;
+		this.targetRect = targetRect;
 	}
 }

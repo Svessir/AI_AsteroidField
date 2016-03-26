@@ -15,7 +15,7 @@ public class PlayerBot implements Runnable {
 	}
 	
 	private Move move;
-	private Thread thread;
+	private MCTS thread;
 	private Robot robot;
 	private long searchTimeMillis = 500;
 	private long wait = 25;
@@ -29,7 +29,7 @@ public class PlayerBot implements Runnable {
 			searchTimeMillis/wait
 		);
 		
-		thread = new Thread(new MCTS(info, tm, searchTimeMillis, move));
+		thread = new MCTS(info, tm, searchTimeMillis, move );
 		
 		try {
 			robot = new Robot();
@@ -43,7 +43,7 @@ public class PlayerBot implements Runnable {
 		try {
 			thread.start();
 			
-			while(true) {
+			while(!Thread.currentThread().isInterrupted()) {
 				if(move.action == MCTS.Action.ROTATE_LEFT)
 					robot.keyPress(KeyEvent.VK_LEFT);
 				else if(move.action == MCTS.Action.ROTATE_RIGHT)
@@ -54,8 +54,7 @@ public class PlayerBot implements Runnable {
 				Thread.sleep(wait);
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			thread.interrupt();
 		}
 	}
 

@@ -6,6 +6,7 @@ import tileMap.Background;
 public abstract class GameState {
 	protected GameStateManager gsm;
 	protected Background bg;
+	protected Thread aiThread;
 	protected boolean isAI;
 	protected String name;
 	
@@ -23,4 +24,5 @@ public abstract class GameState {
 	public abstract Results getResults();
 	public void setAI(boolean isAI) {this.isAI = isAI;}
 	public String getName() { return name; }
+	public abstract void turnOffAi();
 }

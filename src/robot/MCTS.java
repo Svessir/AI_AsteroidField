@@ -9,7 +9,7 @@ import java.util.Random;
 import utility.Helper;
 
 
-public class MCTS implements Runnable {
+public class MCTS extends Thread {
 	
 	public enum Action {THRUST, ROTATE_LEFT, ROTATE_RIGHT, NOOP};
 	
@@ -21,11 +21,13 @@ public class MCTS implements Runnable {
 		public final double target_x;
 		public final double target_y;
 		public final Rectangle2D boundary;
+		public final Rectangle2D targetRect;
 		
-		public World(double target_x, double target_y, Rectangle2D boundary) {
+		public World(double target_x, double target_y, Rectangle2D boundary, Rectangle2D tRect) {
 			this.target_x = target_x;
 			this.target_y = target_y;
 			this.boundary = boundary;
+			this.targetRect = tRect;
 		}
 	}
 	
@@ -64,9 +66,13 @@ public class MCTS implements Runnable {
 		
 		public ArrayList<Action> getLegalActions() {
 			ArrayList<Action> actions = new ArrayList<>();
+			
 			actions.add(Action.ROTATE_LEFT);
 			actions.add(Action.ROTATE_RIGHT);
-			actions.add(Action.THRUST);
+			
+			if(canThrust())
+				actions.add(Action.THRUST);
+			
 			return actions;
 		}
 		
@@ -95,12 +101,12 @@ public class MCTS implements Runnable {
 		
 		public void playAction( Action action ) {
 			
-			if(action == Action.ROTATE_LEFT)
+			if(action == Action.THRUST)
+				thrust();
+			else if(action == Action.ROTATE_LEFT)
 				rotate_left();
 			else if(action == Action.ROTATE_RIGHT)
 				rotate_right();
-			else if(action == Action.THRUST)
-				thrust();
 			
 			// else move by gravity pull
 		}
@@ -129,8 +135,21 @@ public class MCTS implements Runnable {
 			y += dy;
 		}
 		
+		@SuppressWarnings("unused")
 		private void print() {
 			System.out.println("x: " + x + " y: " + y);
+		}
+		
+		private boolean canThrust() {
+			double ox = x, oy= y;
+			move(dx, dy);
+			boolean canThrust = world.boundary.contains(x, y);
+			x = ox; y = oy;
+			return canThrust;
+		}
+		
+		public boolean isTerminal() {
+			return world.targetRect.contains(x, y);
 		}
 	}
 	
@@ -184,8 +203,9 @@ public class MCTS implements Runnable {
 		public double simulate(int depth) {
 			State currentState = new State(state);
 			
-			for(int i = 0; i < depth; i++)
+			for(int i = 0; i < depth; i++) {
 				currentState.playAction(currentState.getRandomLegalAction());
+			}
 			
 			eval = currentState.evaluate();
 			return eval;
@@ -217,7 +237,7 @@ public class MCTS implements Runnable {
 	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, PlayerBot.Move move) {
 		
 		// static objects
-		world = new World(info.targetx, info.targety, info.boundaryRect);
+		world = new World(info.targetx, info.targety, info.boundaryRect, info.targetRect);
 		
 		// initializing root
 		root = new Node(
@@ -242,7 +262,7 @@ public class MCTS implements Runnable {
 
 	@Override
 	public void run() {
-		while(true) {
+		while(!isInterrupted()) {
 			search();
 			move.action = root.action;
 		}
@@ -270,7 +290,7 @@ public class MCTS implements Runnable {
 				n.update(value);
 			}
 		}
-		System.out.println(numberE);
+		//System.out.println(numberE);
 		root = root.bestChild();
 		//root.state.print();
 	}
