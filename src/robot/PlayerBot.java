@@ -2,26 +2,18 @@ package robot;
 
 import java.awt.AWTException;
 import java.awt.Robot;
-import java.awt.event.KeyEvent;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class PlayerBot implements Runnable {
+public class PlayerBot extends Thread {
 	
-	public class Move {
-		public MCTS.Action action;
-		
-		public Move(MCTS.Action action) {
-			this.action = action;
-		}
-	}
-	
-	private Move move;
 	private MCTS thread;
 	private Robot robot;
-	private long searchTimeMillis = 500;
+	private long searchTimeMillis = 50;
 	private long wait = 25;
+	private ConcurrentLinkedQueue<Move> queue;
 	
 	public PlayerBot( GameInfo info ) {
-		move = new Move(MCTS.Action.NOOP);
+		
 		TransitionModel tm = new TransitionModel
 		(
 			info.singleRotation, 
@@ -29,7 +21,9 @@ public class PlayerBot implements Runnable {
 			searchTimeMillis/wait
 		);
 		
-		thread = new MCTS(info, tm, searchTimeMillis, move );
+		queue = new ConcurrentLinkedQueue<>();
+		
+		thread = new MCTS(info, tm, searchTimeMillis, queue , this );
 		
 		try {
 			robot = new Robot();
@@ -44,18 +38,22 @@ public class PlayerBot implements Runnable {
 			thread.start();
 			
 			while(!Thread.currentThread().isInterrupted()) {
-				if(move.action == MCTS.Action.ROTATE_LEFT)
-					robot.keyPress(KeyEvent.VK_LEFT);
-				else if(move.action == MCTS.Action.ROTATE_RIGHT)
-					robot.keyPress(KeyEvent.VK_RIGHT);
-				else if(move.action == MCTS.Action.THRUST)
-					robot.keyPress(KeyEvent.VK_UP);
 				
-				Thread.sleep(wait);
+				if(queue.isEmpty()) {
+					Thread.sleep(wait);
+					continue;
+				}
+				
+				Move move = queue.poll();
+				
+				for(int i = 0; i < move.numberOfTimes; i++) {
+					if(move.keyCode != Integer.MIN_VALUE)
+						robot.keyPress(move.keyCode);
+					Thread.sleep(wait);
+				}
 			}
 		} catch (InterruptedException e) {
 			thread.interrupt();
 		}
 	}
-
 }

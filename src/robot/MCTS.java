@@ -1,11 +1,14 @@
 package robot;
 
+import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
+import entity.Target;
 import utility.Helper;
 
 
@@ -18,16 +21,12 @@ public class MCTS extends Thread {
 	 * States can reference this object for information
 	 */
 	private class World {
-		public final double target_x;
-		public final double target_y;
+		public final Target target;
 		public final Rectangle2D boundary;
-		public final Rectangle2D targetRect;
 		
-		public World(double target_x, double target_y, Rectangle2D boundary, Rectangle2D tRect) {
-			this.target_x = target_x;
-			this.target_y = target_y;
+		public World(Target target, Rectangle2D boundary) {
+			this.target = target;
 			this.boundary = boundary;
-			this.targetRect = tRect;
 		}
 	}
 	
@@ -36,7 +35,7 @@ public class MCTS extends Thread {
 	 *  - includes it's position and direction vector along with
 	 *  it's total fuel consumption.
 	 */
-	private class State {
+	public class State {
 		// position
 		public double x;
 		public double y;
@@ -48,7 +47,7 @@ public class MCTS extends Thread {
 		// fuel
 		public double fuelSpent;
 		
-		public State (double x, double y, double dx, double dy, double fuelSpent) {
+		private State (double x, double y, double dx, double dy, double fuelSpent) {
 			this.x = x;
 			this.y = y;
 			this.dx = dx;
@@ -83,13 +82,13 @@ public class MCTS extends Thread {
 		}
 		
 		public double evaluate() { 
-			return (initialDistance - Helper.calculateDistance(x, y, world.target_x, world.target_y))/fuelSpent; 
+			return (initialDistance - Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()))/fuelSpent; 
 		}
 		
 		public Action getRandomLegalAction() {
 			int number = rand.nextInt(3);
 			
-			if(number == 0)
+			if(number == 0 && canThrust())
 				return Action.THRUST;
 			if(number == 1)
 				return Action.ROTATE_RIGHT;
@@ -149,7 +148,16 @@ public class MCTS extends Thread {
 		}
 		
 		public boolean isTerminal() {
-			return world.targetRect.contains(x, y);
+			return world.target.getRectangle().contains(x, y);
+		}
+		
+		public double getErrorBetweenStates(State s) {
+			double error = 0.0;
+			error += Math.max(x, s.x) - Math.min(x, s.x);
+			error += Math.max(y, s.y) - Math.min(y, s.y);
+			error += Math.max(dx, s.dx) - Math.min(dx, s.dx);
+			error += Math.max(dy, s.dy) - Math.min(dy, s.dy);
+			return error;
 		}
 	}
 	
@@ -202,10 +210,16 @@ public class MCTS extends Thread {
 		
 		public double simulate(int depth) {
 			State currentState = new State(state);
-			
-			for(int i = 0; i < depth; i++) {
+			int i;
+			for(i = 0; i < depth; i++) {
 				currentState.playAction(currentState.getRandomLegalAction());
+				//currentState.isTerminal();
+				if(currentState.isTerminal()) break; 
 			}
+			/*
+			for(; i < depth * 10; i++) {
+				currentState.playAction(Action.ROTATE_RIGHT);
+			}*/
 			
 			eval = currentState.evaluate();
 			return eval;
@@ -227,17 +241,17 @@ public class MCTS extends Thread {
 	private long searchTimeMillis;
 	private long startTime;
 	private double initialDistance;
-	private int maxDepth = 100;
+	private int maxDepth = 1000;
 	private World world;
 	private TransitionModel transitionModel;
 	private Node root;
-	private PlayerBot.Move move;
 	private Random rand = new Random();
+	private ConcurrentLinkedQueue<Move> queue;
 	
-	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, PlayerBot.Move move) {
+	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, ConcurrentLinkedQueue<Move> queue, PlayerBot bot) {
 		
 		// static objects
-		world = new World(info.targetx, info.targety, info.boundaryRect, info.targetRect);
+		world = new World(info.target, info.boundaryRect);
 		
 		// initializing root
 		root = new Node(
@@ -255,16 +269,24 @@ public class MCTS extends Thread {
 		
 		this.searchTimeMillis = searchTimeMillis;
 		
-		this.move = move;
+		this.queue = queue;
 		
-		initialDistance = Helper.calculateDistance(info.rocketx, info.rockety, info.targetx, info.targety);
+		initialDistance = Helper.calculateDistance(info.rocketx, info.rockety, world.target.getX(), info.target.getY());
 	}
 
 	@Override
 	public void run() {
 		while(!isInterrupted()) {
 			search();
-			move.action = root.action;
+			
+			if(root.action == Action.THRUST)
+				queue.add(new Move(KeyEvent.VK_UP, (int)transitionModel.NUMBER_OF_ACTIONS_PER_TRANSITION));
+			else if(root.action == Action.ROTATE_LEFT)
+				queue.add(new Move(KeyEvent.VK_LEFT, (int)transitionModel.NUMBER_OF_ACTIONS_PER_TRANSITION));
+			else if(root.action == Action.ROTATE_RIGHT)
+				queue.add(new Move(KeyEvent.VK_RIGHT, (int)transitionModel.NUMBER_OF_ACTIONS_PER_TRANSITION));
+			/*else
+				queue.add(new Move(Integer.MIN_VALUE, (int)transitionModel.NUMBER_OF_ACTIONS_PER_TRANSITION));*/
 		}
 	}
 	
@@ -290,7 +312,7 @@ public class MCTS extends Thread {
 				n.update(value);
 			}
 		}
-		//System.out.println(numberE);
+		System.out.println(numberE);
 		root = root.bestChild();
 		//root.state.print();
 	}

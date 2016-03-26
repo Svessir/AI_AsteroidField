@@ -14,7 +14,6 @@ public class Level1State extends GameState{
 	private Background bg;
 	private Rocket rocket;
 	private Target target;
-	private PlayerBot bot;
 	private double shortestDistance;
 	private double rocketInitialX;
 	private double rocketInitialY;
@@ -54,17 +53,14 @@ public class Level1State extends GameState{
 				rocket.getY(), 
 				rocket.getDx(), 
 				rocket.getDy(), 
-				target.getX(), 
-				target.getY(), 
 				rocket.getFuelSpent(),
 				rocket.getSingleRotation(),
 				rocket.getFuelConsumptionForSingleThrust(),
 				gsm.boundaryRectangle,
-				target.getRectangle()
+				new Target(targetInitialX, targetInitialY)
 			);
 			
-		    bot = new PlayerBot(info);
-			aiThread = new Thread(bot);
+		    aiThread = new PlayerBot(info);
 			aiThread.start();
 		}
 	}
