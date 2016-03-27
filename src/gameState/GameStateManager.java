@@ -3,6 +3,7 @@ package gameState;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import entity.Asteroid;
 import entity.Results;
 import entity.Rocket;
 import entity.Target;
@@ -18,6 +19,7 @@ public class GameStateManager {
 	public static final int RESULTSTATE = 1;
 	public static final int LEVELSELECTIONSTATE = 2;
 	public static final int LEVEL1STATE = 3;
+	public static final int LEVEL2STATE = 4;
 	
 	public GameStateManager(Rectangle boundaryRectangle) {
 		this.boundaryRectangle = boundaryRectangle;
@@ -28,6 +30,7 @@ public class GameStateManager {
 		gameStates.add(new ResultState(this));
 		gameStates.add(new LevelSelectionState(this));
 		gameStates.add(new Level1State(this, "Level 1", new Rocket(200, 200, 1, 0, boundaryRectangle), new Target(20, 20)));
+		gameStates.add(new Level2State(this, "Level 2", new Rocket(20, 20, 1, 0, boundaryRectangle), new Target(200, 200), getLevel2Asteroids()));
 	}
 	
 	public void setState(int state) {
@@ -70,7 +73,7 @@ public class GameStateManager {
 	public ArrayList<String> getLevelNames() {
 		ArrayList<String> names = new ArrayList<>();
 		for(int i = 0; i < gameStates.size(); i++) {
-			if(i != LEVEL1STATE && i != MENUSTATE)
+			if(i != LEVEL1STATE && i != MENUSTATE && i != LEVEL2STATE)
 				continue;
 			GameState s = gameStates.get(i);
 			names.add(s.getName());
@@ -79,4 +82,11 @@ public class GameStateManager {
 	}
 	
 	public void setAi(boolean isAI) { this.isAI = isAI; }
+	
+	private Asteroid[] getLevel2Asteroids() {
+		Asteroid[] asteroids = {
+			new Asteroid(50, 50, 1)
+		};
+		return asteroids;
+	}
 }

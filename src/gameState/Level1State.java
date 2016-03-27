@@ -11,14 +11,14 @@ import robot.PlayerBot;
 import tileMap.Background;
 
 public class Level1State extends GameState{
-	private Background bg;
-	private Rocket rocket;
-	private Target target;
-	private double shortestDistance;
-	private double rocketInitialX;
-	private double rocketInitialY;
-	private double targetInitialX;
-	private double targetInitialY;
+	protected Background bg;
+	protected Rocket rocket;
+	protected Target target;
+	protected double shortestDistance;
+	protected double rocketInitialX;
+	protected double rocketInitialY;
+	protected double targetInitialX;
+	protected double targetInitialY;
 	
 	
 	public Level1State(GameStateManager gsm, String levelName ,Rocket r, Target t) {
@@ -78,7 +78,6 @@ public class Level1State extends GameState{
 		bg.draw(g);
 		target.draw(g);
 		rocket.draw(g);
-		//rocket.print();
 	}
 
 	@Override
@@ -116,7 +115,9 @@ public class Level1State extends GameState{
 
 	@Override
 	public void turnOffAi() {
-		aiThread.interrupt();
-		isAI = false;
+		if(isAI) {
+			aiThread.interrupt();
+			isAI = false;
+		}
 	}
 }
