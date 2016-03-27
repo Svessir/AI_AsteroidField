@@ -184,17 +184,7 @@ public class MCTS extends Thread {
 		public boolean isFullyExpanded() { return unexploredActions.isEmpty(); }
 		
 		public Node selectChild() {
-			Node best = children.get(0);
-			double bestEval = best.eval;
-			
-			for(Node child : children) {
-				if(child.eval > bestEval) {
-					best = child;
-					bestEval = child.eval;
-				}
-			}
-			
-			return best;
+			return bestChild();
 		}
 		
 		public Node expand() {
@@ -216,10 +206,6 @@ public class MCTS extends Thread {
 				//currentState.isTerminal();
 				if(currentState.isTerminal()) break; 
 			}
-			/*
-			for(; i < depth * 10; i++) {
-				currentState.playAction(Action.ROTATE_RIGHT);
-			}*/
 			
 			eval = currentState.evaluate();
 			return eval;
@@ -233,10 +219,20 @@ public class MCTS extends Thread {
 			eval = sum/children.size();
 		}
 		
-		public Node bestChild() { return root.selectChild(); }
+		public Node bestChild() {
+			Node best = children.get(0);
+			double bestEval = best.eval;
+			
+			for(Node child : children) {
+				if(child.eval > bestEval) {
+					best = child;
+					bestEval = child.eval;
+				}
+			}
+			
+			return best;
+		}
 	}
-	
-	//private class OutOfTimeException extends RuntimeException {}
 	
 	private long searchTimeMillis;
 	private long startTime;
