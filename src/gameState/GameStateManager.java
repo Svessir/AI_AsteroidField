@@ -29,7 +29,7 @@ public class GameStateManager {
 		gameStates.add(new MenuState(this));
 		gameStates.add(new ResultState(this));
 		gameStates.add(new LevelSelectionState(this));
-		gameStates.add(new Level1State(this, "Level 1", new Rocket(200, 200, 1, 0, boundaryRectangle), new Target(20, 20)));
+		gameStates.add(new Level1State(this, "Level 1", new Rocket(20, 20, 1, 0, boundaryRectangle), new Target(200, 200)));
 		gameStates.add(new Level2State(this, "Level 2", new Rocket(20, 20, 1, 0, boundaryRectangle), new Target(200, 200), getLevel2Asteroids()));
 	}
 	
@@ -83,9 +83,14 @@ public class GameStateManager {
 	
 	public void setAi(boolean isAI) { this.isAI = isAI; }
 	
+	public void gravityUpdate() {
+		gameStates.get(currentState).gravityUpdate();
+	}
+	
 	private Asteroid[] getLevel2Asteroids() {
 		Asteroid[] asteroids = {
-			new Asteroid(50, 50, 1)
+			new Asteroid(100, 100, 1),
+			new Asteroid(200, 100, 2)
 		};
 		return asteroids;
 	}

@@ -57,7 +57,8 @@ public class Level1State extends GameState{
 				rocket.getSingleRotation(),
 				rocket.getFuelConsumptionForSingleThrust(),
 				gsm.boundaryRectangle,
-				new Target(targetInitialX, targetInitialY)
+				new Target(targetInitialX, targetInitialY),
+				null
 			);
 			
 		    aiThread = new PlayerBot(info);
@@ -88,7 +89,8 @@ public class Level1State extends GameState{
 			rocket.rotateLeft();
 		else if(k == KeyEvent.VK_UP)
 			rocket.thrust();
-		else {/* Move by Gravity */}
+		
+		rocket.print();
 	}
 
 	@Override
@@ -119,5 +121,11 @@ public class Level1State extends GameState{
 			aiThread.interrupt();
 			isAI = false;
 		}
+	}
+
+	@Override
+	public void gravityUpdate() {
+		// TODO Auto-generated method stub
+		
 	}
 }

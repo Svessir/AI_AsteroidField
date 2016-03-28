@@ -116,6 +116,10 @@ public class Rocket extends MapObject{
 		return Math.round(Math.sqrt(xDist * xDist + yDist * yDist));
 	}
 	
+	public void moveByVector(double gx, double gy) {
+		distanceTraveled += calculateDistance(x, y, x += gx, y += gy);
+	}
+	
 	public void print() {
 		System.out.println("rocket =  x: " + x + " y: " + y);
 	} 

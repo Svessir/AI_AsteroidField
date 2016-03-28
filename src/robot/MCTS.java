@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import entity.Asteroid;
 import entity.Target;
 import utility.Helper;
 
@@ -23,10 +24,12 @@ public class MCTS extends Thread {
 	private class World {
 		public final Target target;
 		public final Rectangle2D boundary;
+		public final Asteroid[] asteroids;
 		
-		public World(Target target, Rectangle2D boundary) {
+		public World(Target target, Rectangle2D boundary, Asteroid[] asteroids) {
 			this.target = target;
 			this.boundary = boundary;
+			this.asteroids = asteroids;
 		}
 	}
 	
@@ -43,6 +46,8 @@ public class MCTS extends Thread {
 		// direction vector
 		public double dx;
 		public double dy;
+		
+		//gravity vector
 		
 		// fuel
 		public double fuelSpent;
@@ -68,6 +73,7 @@ public class MCTS extends Thread {
 			
 			actions.add(Action.ROTATE_LEFT);
 			actions.add(Action.ROTATE_RIGHT);
+			actions.add(Action.NOOP);
 			
 			if(canThrust())
 				actions.add(Action.THRUST);
@@ -106,8 +112,6 @@ public class MCTS extends Thread {
 				rotate_left();
 			else if(action == Action.ROTATE_RIGHT)
 				rotate_right();
-			
-			// else move by gravity pull
 		}
 		
 		private void rotate_left() {
@@ -203,7 +207,6 @@ public class MCTS extends Thread {
 			int i;
 			for(i = 0; i < depth; i++) {
 				currentState.playAction(currentState.getRandomLegalAction());
-				//currentState.isTerminal();
 				if(currentState.isTerminal()) break; 
 			}
 			
@@ -237,7 +240,7 @@ public class MCTS extends Thread {
 	private long searchTimeMillis;
 	private long startTime;
 	private double initialDistance;
-	private int maxDepth = 1000;
+	private int maxDepth = 100;
 	private World world;
 	private TransitionModel transitionModel;
 	private Node root;
@@ -247,7 +250,7 @@ public class MCTS extends Thread {
 	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, ConcurrentLinkedQueue<Move> queue, PlayerBot bot) {
 		
 		// static objects
-		world = new World(info.target, info.boundaryRect);
+		world = new World(info.target, info.boundaryRect, info.asteroids);
 		
 		// initializing root
 		root = new Node(
@@ -281,8 +284,9 @@ public class MCTS extends Thread {
 				queue.add(new Move(KeyEvent.VK_LEFT, (int)transitionModel.NUMBER_OF_ACTIONS_PER_TRANSITION));
 			else if(root.action == Action.ROTATE_RIGHT)
 				queue.add(new Move(KeyEvent.VK_RIGHT, (int)transitionModel.NUMBER_OF_ACTIONS_PER_TRANSITION));
-			/*else
-				queue.add(new Move(Integer.MIN_VALUE, (int)transitionModel.NUMBER_OF_ACTIONS_PER_TRANSITION));*/
+			else {// NOOP
+				queue.add(new Move(Integer.MIN_VALUE, (int)transitionModel.NUMBER_OF_ACTIONS_PER_TRANSITION));
+			}
 		}
 	}
 	
@@ -310,7 +314,6 @@ public class MCTS extends Thread {
 		}
 		System.out.println(numberE);
 		root = root.bestChild();
-		//root.state.print();
 	}
 	
 	private boolean isTime() {

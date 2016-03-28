@@ -56,4 +56,10 @@ public class ResultState extends GameState {
 		
 	}
 
+	@Override
+	public void gravityUpdate() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

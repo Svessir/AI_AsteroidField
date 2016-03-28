@@ -2,6 +2,7 @@ package robot;
 
 import java.awt.geom.Rectangle2D;
 
+import entity.Asteroid;
 import entity.Target;
 
 public class GameInfo {
@@ -14,8 +15,7 @@ public class GameInfo {
 	public double singleThrustFuel;
 	public Rectangle2D boundaryRect;
 	public Target target;
-	
-	// public ArrayList of asteroids
+	public Asteroid[] asteroids;
 	
 	public GameInfo(
 			double rx,
@@ -26,7 +26,8 @@ public class GameInfo {
 			double singleRotation,
 			double singleThrustFuel,
 			Rectangle2D boundary,
-			Target target) {
+			Target target,
+			Asteroid[] asteroids) {
 		rocketx = rx;
 		rockety = ry;
 		rocketdx = rdx;
@@ -36,6 +37,7 @@ public class GameInfo {
 		this.singleThrustFuel = singleThrustFuel;
 		boundaryRect = boundary;
 		this.target = target;
+		this.asteroids = asteroids;
 	}
 
 	public GameInfo(double x, double y, double dx, double dy, double fuelSpent) {

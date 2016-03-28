@@ -11,6 +11,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import utility.Helper;
+import utility.Vector2D;
 
 public class Asteroid extends MapObject{
 	
@@ -22,7 +23,8 @@ public class Asteroid extends MapObject{
 	
 	public Asteroid(double x, double y, double weight) {
 		super(x, y, 30 * (int)weight, 30 * (int)weight);
-		gravityFieldRadius = 100 * weight;
+		this.weight = weight;
+		gravityFieldRadius = 50 * weight;
 		
 		BufferedImage original;
 		try {
@@ -47,7 +49,7 @@ public class Asteroid extends MapObject{
 	public void draw(Graphics2D g) {
 		// draw gravity field
 		g.setColor(new Color(153, 255, 255, 55));
-		g.fillOval((int)x - (int)(gravityFieldRadius/2), (int)y - (int)(gravityFieldRadius/2), (int)gravityFieldRadius, (int)gravityFieldRadius);
+		g.fillOval((int)x - (int)(gravityFieldRadius), (int)y - (int)(gravityFieldRadius), (int)gravityFieldRadius * 2, (int)gravityFieldRadius * 2);
 		
 		// draw asteroid
 		AffineTransform at = new AffineTransform();
@@ -56,7 +58,20 @@ public class Asteroid extends MapObject{
 		g.drawImage(image, at, null);
 	}
 	
-	public boolean isInRadius(MapObject o) {
+	public boolean isInGravityField(MapObject o) {
 		return Helper.calculateDistance(x, y, o.x, o.y) <= gravityFieldRadius;
+	}
+	
+	public Vector2D getGravitationalVector(MapObject o) {
+		double gx = x - o.getX();
+		double gy = y - o.getY();
+		Vector2D vector = new Vector2D(gx, gy);
+		vector.convertToUnitVector();
+		vector.mulitplyBy(weight);
+		return vector;
+	}
+	
+	public Asteroid copy() {
+		return new Asteroid(x, y, weight);
 	}
 }

@@ -25,4 +25,5 @@ public abstract class GameState {
 	public void setAI(boolean isAI) {this.isAI = isAI;}
 	public String getName() { return name; }
 	public abstract void turnOffAi();
+	public abstract void gravityUpdate();
 }

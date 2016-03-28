@@ -105,4 +105,10 @@ public class MenuState extends GameState {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void gravityUpdate() {
+		// TODO Auto-generated method stub
+		
+	}
 }
