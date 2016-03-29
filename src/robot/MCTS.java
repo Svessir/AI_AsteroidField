@@ -253,7 +253,7 @@ public class MCTS extends Thread {
 	private ConcurrentLinkedQueue<Move> queue;
 	private boolean isOn = true;
 	
-	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, ConcurrentLinkedQueue<Move> queue) {
+	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, ConcurrentLinkedQueue<Move> queue ) {
 		
 		// static objects
 		world = new World(info.target, info.boundaryRect, info.asteroids);
@@ -313,7 +313,6 @@ public class MCTS extends Thread {
 				n.update();
 			}
 		}
-		System.out.println(numberE);
 		root = root.bestChild();
 	}
 	

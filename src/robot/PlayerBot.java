@@ -4,8 +4,6 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import gameState.GameStateManager;
-
 public class PlayerBot extends Thread {
 	
 	private MCTS thread;
@@ -42,7 +40,6 @@ public class PlayerBot extends Thread {
 			while(isOn) {
 				
 				if(queue.isEmpty()) {
-					Thread.sleep(wait);
 					continue;
 				}
 				
