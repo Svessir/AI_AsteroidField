@@ -58,7 +58,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		long start;
 		long elapsed;
 		long wait;
-		long gElapsed = 0;
 		
 		// game loop
 		while(running) {
@@ -69,12 +68,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			drawToScreen();
 			
 			elapsed = System.nanoTime() - start;
-			gElapsed += elapsed;
-			
-			if(gElapsed/1000000 >= 5){
-				gElapsed = 0;
-				gsm.gravityUpdate();
-			}
 			
 			wait = targetTime - (elapsed / 1000000);
 			

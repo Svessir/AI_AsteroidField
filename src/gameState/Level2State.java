@@ -3,11 +3,11 @@ package gameState;
 import java.awt.Graphics2D;
 
 import entity.Asteroid;
+import entity.Results;
 import entity.Rocket;
 import entity.Target;
 import robot.GameInfo;
 import robot.PlayerBot;
-import utility.Vector2D;
 
 public class Level2State extends Level1State {
 	
@@ -55,25 +55,21 @@ public class Level2State extends Level1State {
 		
 		target.draw(g);
 		rocket.draw(g);
+		//rocket.print();
 	}
 	
 	@Override
-	public void gravityUpdate() {
-		Vector2D vector = new Vector2D(0.0, 0.0);
-		boolean isInGravityField = false;
-		
-		for(Asteroid asteroid: asteroids) {
-			if(asteroid.isInGravityField(rocket)) {
-				isInGravityField = true;
-				vector.addVector(asteroid.getGravitationalVector(rocket));
-			}
-		}
-		
-		if(isInGravityField) {
-			vector.convertToUnitVector();
-			vector.mulitplyBy(0.5);
-			rocket.moveByVector(vector.x, vector.y);
-		}
+	public boolean isGameOver() {
+		 boolean isGameOver = super.isGameOver();
+		 
+		 if(!isGameOver) {
+			 for(Asteroid asteroid : asteroids) {
+				 if(asteroid.collides(rocket))
+					 return true;
+			 }
+		 }
+		 
+		 return isGameOver;
 	}
 	
 	private Asteroid[] copyAsteroids() {
@@ -83,5 +79,19 @@ public class Level2State extends Level1State {
 		}
 		return newAsteroids;
 	}
-
+	
+	@Override
+	public Results getResults() {
+		if(super.isGameOver())
+			return super.getResults();
+		
+		return new Results(
+				gsm.boundaryRectangle.getCenterX(), 
+				gsm.boundaryRectangle.getCenterY(), 
+				150, 
+				100,
+				shortestDistance,
+				rocket.getDistanceTraveled(),
+				rocket.getFuelSpent());
+	}
 }

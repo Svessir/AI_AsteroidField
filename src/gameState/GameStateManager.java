@@ -24,6 +24,7 @@ public class GameStateManager {
 	public static final int LEVEL3STATE = 5;
 	public static final int LEVEL4STATE = 6;
 	public static final int LEVEL5STATE = 7;
+	public static final int LEVEL6STATE = 8;
 	
 	public GameStateManager(Rectangle boundaryRectangle) {
 		this.boundaryRectangle = boundaryRectangle;
@@ -37,7 +38,8 @@ public class GameStateManager {
 		gameStates.add(new Level1State(this, "Level 2", new Rocket(20, 20, 1, 0, boundaryRectangle), new Target(200, 200)));
 		gameStates.add(new Level1State(this, "Level 3", new Rocket(20, 220, 1, 0, boundaryRectangle), new Target(300, 20)));
 		gameStates.add(new Level1State(this, "Level 4", new Rocket(300, 20, 1, 0, boundaryRectangle), new Target(20, 220)));
-		gameStates.add(new Level2State(this, "Level 5", new Rocket(20, 20, 1, 0, boundaryRectangle), new Target(200, 200), getLevel2Asteroids()));
+		gameStates.add(new Level2State(this, "Level 5", new Rocket(20, 20, 1, 0, boundaryRectangle), new Target(200, 200), getLevel5Asteroids()));
+		gameStates.add(new Level2State(this, "Level 6", new Rocket(20, 220, 1, 0, boundaryRectangle), new Target(300, 20), getLevel6Asteroids()));
 	}
 	
 	public void setState(int state) {
@@ -94,10 +96,6 @@ public class GameStateManager {
 	
 	public void setAi(boolean isAI) { this.isAI = isAI; }
 	
-	public void gravityUpdate() {
-		gameStates.get(currentState).gravityUpdate();
-	}
-	
 	public GameInfo getRocketInfo() {
 		GameState state = gameStates.get(currentState);
 		
@@ -108,9 +106,18 @@ public class GameStateManager {
 		return lvlState.getRocketInfo();
 	}
 	
-	private Asteroid[] getLevel2Asteroids() {
+	private Asteroid[] getLevel5Asteroids() {
 		Asteroid[] asteroids = {
-			new Asteroid(100, 100, 1),
+			new Asteroid(100, 100, 3),
+		};
+		return asteroids;
+	}
+	
+	private Asteroid[] getLevel6Asteroids() {
+		Asteroid[] asteroids = {
+			new Asteroid(200, 30, 1),
+			new Asteroid(230, 60, 1),
+			new Asteroid(288, 90, 1),
 		};
 		return asteroids;
 	}

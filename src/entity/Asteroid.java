@@ -1,6 +1,5 @@
 package entity;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -11,20 +10,22 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import utility.Helper;
-import utility.Vector2D;
 
 public class Asteroid extends MapObject{
 	
 	private double weight;
-	private double gravityFieldRadius;
 	
 	// Image
 	private BufferedImage image;
 	
+	// collision radius
+	private double collistionRadius;
+	
 	public Asteroid(double x, double y, double weight) {
 		super(x, y, 30 * (int)weight, 30 * (int)weight);
 		this.weight = weight;
-		gravityFieldRadius = 50 * weight;
+		
+		collistionRadius = (height / 2.0) - 10.0;
 		
 		BufferedImage original;
 		try {
@@ -42,33 +43,28 @@ public class Asteroid extends MapObject{
 
 	@Override
 	public Rectangle getRectangle() {
-		return null;
+		return new Rectangle((int)x - (width/2), (int)y - (height/2), width, height);
+	}
+	
+	@Override
+	public boolean collides(MapObject o) {
+		// Only the rocket will be able to collide with asteroids
+		if(!(o instanceof Rocket)) return false;
+		
+		Rocket rocket = (Rocket) o;
+		double rocketPadding = rocket.getHeight() / 2.0;
+		double rocketX = rocket.getX() + (rocket.getDx() * rocketPadding);
+		double rocketY = rocket.getY() + (rocket.getDy() * rocketPadding);
+		return Helper.calculateDistance(rocketX, rocketY, x, y) < collistionRadius;
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-		// draw gravity field
-		g.setColor(new Color(153, 255, 255, 55));
-		g.fillOval((int)x - (int)(gravityFieldRadius), (int)y - (int)(gravityFieldRadius), (int)gravityFieldRadius * 2, (int)gravityFieldRadius * 2);
-		
 		// draw asteroid
 		AffineTransform at = new AffineTransform();
 		at.translate(x, y);
 		at.translate(-(height/2), -(width/2));
 		g.drawImage(image, at, null);
-	}
-	
-	public boolean isInGravityField(MapObject o) {
-		return Helper.calculateDistance(x, y, o.x, o.y) <= gravityFieldRadius;
-	}
-	
-	public Vector2D getGravitationalVector(MapObject o) {
-		double gx = x - o.getX();
-		double gy = y - o.getY();
-		Vector2D vector = new Vector2D(gx, gy);
-		vector.convertToUnitVector();
-		vector.mulitplyBy(weight);
-		return vector;
 	}
 	
 	public Asteroid copy() {

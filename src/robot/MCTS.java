@@ -52,12 +52,16 @@ public class MCTS extends Thread {
 		// fuel
 		public double fuelSpent;
 		
+		// is collision
+		public boolean isCollision;
+		
 		private State (double x, double y, double dx, double dy, double fuelSpent) {
 			this.x = x;
 			this.y = y;
 			this.dx = dx;
 			this.dy = dy;
 			this.fuelSpent = fuelSpent;
+			this.isCollision = isCollision();
 		}
 		
 		public State(State s) {
@@ -81,7 +85,6 @@ public class MCTS extends Thread {
 			
 			actions.add(Action.ROTATE_LEFT);
 			actions.add(Action.ROTATE_RIGHT);
-			actions.add(Action.NOOP);
 			
 			if(canThrust())
 				actions.add(Action.THRUST);
@@ -96,7 +99,8 @@ public class MCTS extends Thread {
 		}
 		
 		public double evaluate() { 
-			return (initialDistance - Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()))/fuelSpent; 
+			double eval = (initialDistance - Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()))/fuelSpent; 
+			return isCollision ? -eval : eval;
 		}
 		
 		public Action getRandomLegalAction() {
@@ -106,16 +110,15 @@ public class MCTS extends Thread {
 				return Action.THRUST;
 			if(number == 1)
 				return Action.ROTATE_RIGHT;
-			if(number == 2)
-				return Action.ROTATE_LEFT;
-			
-			return Action.NOOP;
+			return Action.ROTATE_LEFT;
 		}
 		
 		public void playAction( Action action ) {
 			
-			if(action == Action.THRUST)
+			if(action == Action.THRUST){
 				thrust();
+				isCollision = isCollision();
+			}
 			else if(action == Action.ROTATE_LEFT)
 				rotate_left();
 			else if(action == Action.ROTATE_RIGHT)
@@ -160,7 +163,7 @@ public class MCTS extends Thread {
 		}
 		
 		public boolean isTerminal() {
-			return Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()) < 5;
+			return isCollision || Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()) < 5;
 		}
 		
 		public double getErrorBetweenStates(State s) {
@@ -168,6 +171,17 @@ public class MCTS extends Thread {
 			error += Math.max(x, s.x) - Math.min(x, s.x);
 			error += Math.max(y, s.y) - Math.min(y, s.y);
 			return error;
+		}
+		
+		public boolean isCollision() {
+			if(world.asteroids == null) return false;
+			
+			for(Asteroid asteroid : world.asteroids) {
+				if(Helper.calculateDistance(x, y, asteroid.getX(), asteroid.getY()) < ((asteroid.getWidth()/2.0) + 10.0)){
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 	
@@ -313,7 +327,9 @@ public class MCTS extends Thread {
 				n.update();
 			}
 		}
+		//System.out.println(numberE);
 		root = root.bestChild();
+		//System.out.println(root.state.isCollision);
 	}
 	
 	private boolean isTime() {

@@ -122,9 +122,6 @@ public class Level1State extends GameState{
 			isAI = false;
 		}
 	}
-
-	@Override
-	public void gravityUpdate() {}
 	
 	public GameInfo getRocketInfo() {
 		return new GameInfo

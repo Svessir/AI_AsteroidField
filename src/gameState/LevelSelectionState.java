@@ -67,6 +67,8 @@ public class LevelSelectionState extends GameState{
 			gsm.setState(GameStateManager.LEVEL4STATE);
 		else if(currentChoice == 5)
 			gsm.setState(GameStateManager.LEVEL5STATE);
+		else if(currentChoice == 6)
+			gsm.setState(GameStateManager.LEVEL6STATE);
 	}
 
 	@Override
@@ -95,12 +97,6 @@ public class LevelSelectionState extends GameState{
 
 	@Override
 	public void turnOffAi() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void gravityUpdate() {
 		// TODO Auto-generated method stub
 		
 	}
