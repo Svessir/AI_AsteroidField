@@ -4,6 +4,8 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import gameState.GameStateManager;
+
 public class PlayerBot extends Thread {
 	
 	private MCTS thread;
@@ -11,9 +13,9 @@ public class PlayerBot extends Thread {
 	private long searchTimeMillis = 500;
 	private long wait = 25;
 	private ConcurrentLinkedQueue<Move> queue;
+	private boolean isOn = true;
 	
-	public PlayerBot( GameInfo info ) {
-		
+	public PlayerBot( GameInfo info) {
 		TransitionModel tm = new TransitionModel
 		(
 			info.singleRotation, 
@@ -23,7 +25,7 @@ public class PlayerBot extends Thread {
 		
 		queue = new ConcurrentLinkedQueue<>();
 		
-		thread = new MCTS(info, tm, searchTimeMillis, queue , this );
+		thread = new MCTS(info, tm, searchTimeMillis, queue);
 		
 		try {
 			robot = new Robot();
@@ -37,7 +39,7 @@ public class PlayerBot extends Thread {
 		try {
 			thread.start();
 			
-			while(!Thread.currentThread().isInterrupted()) {
+			while(isOn) {
 				
 				if(queue.isEmpty()) {
 					Thread.sleep(wait);
@@ -53,7 +55,12 @@ public class PlayerBot extends Thread {
 				}
 			}
 		} catch (InterruptedException e) {
-			thread.interrupt();
+			e.printStackTrace();
 		}
 	}
+	
+	public void turnOff() {
+		thread.turnOff();
+		isOn = false;
+	} 
 }

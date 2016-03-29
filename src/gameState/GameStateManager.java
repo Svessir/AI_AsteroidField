@@ -7,6 +7,7 @@ import entity.Asteroid;
 import entity.Results;
 import entity.Rocket;
 import entity.Target;
+import robot.GameInfo;
 
 public class GameStateManager {
 	
@@ -29,7 +30,7 @@ public class GameStateManager {
 		gameStates.add(new MenuState(this));
 		gameStates.add(new ResultState(this));
 		gameStates.add(new LevelSelectionState(this));
-		gameStates.add(new Level1State(this, "Level 1", new Rocket(20, 20, 1, 0, boundaryRectangle), new Target(200, 200)));
+		gameStates.add(new Level1State(this, "Level 1", new Rocket(200, 200, 1, 0, boundaryRectangle), new Target(20, 20)));
 		gameStates.add(new Level2State(this, "Level 2", new Rocket(20, 20, 1, 0, boundaryRectangle), new Target(200, 200), getLevel2Asteroids()));
 	}
 	
@@ -87,10 +88,20 @@ public class GameStateManager {
 		gameStates.get(currentState).gravityUpdate();
 	}
 	
+	public GameInfo getRocketInfo() {
+		GameState state = gameStates.get(currentState);
+		
+		if(!(state instanceof Level1State)) return null;
+		
+		Level1State lvlState = (Level1State)state;
+		
+		return lvlState.getRocketInfo();
+	}
+	
 	private Asteroid[] getLevel2Asteroids() {
 		Asteroid[] asteroids = {
 			new Asteroid(100, 100, 1),
-			new Asteroid(200, 100, 2)
+			new Asteroid(200, 100, 1)
 		};
 		return asteroids;
 	}

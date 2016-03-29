@@ -1,12 +1,13 @@
 package gameState;
 
 import entity.Results;
+import robot.PlayerBot;
 import tileMap.Background;
 
 public abstract class GameState {
 	protected GameStateManager gsm;
 	protected Background bg;
-	protected Thread aiThread;
+	protected PlayerBot aiThread;
 	protected boolean isAI;
 	protected String name;
 	

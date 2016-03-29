@@ -83,7 +83,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			}
 			
 			try {
-				Thread.sleep(25);
+				Thread.sleep(wait);
 			}
 			catch(Exception e) {
 				e.printStackTrace();

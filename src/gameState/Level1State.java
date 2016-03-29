@@ -90,7 +90,7 @@ public class Level1State extends GameState{
 		else if(k == KeyEvent.VK_UP)
 			rocket.thrust();
 		
-		rocket.print();
+		//rocket.print();
 	}
 
 	@Override
@@ -118,14 +118,22 @@ public class Level1State extends GameState{
 	@Override
 	public void turnOffAi() {
 		if(isAI) {
-			aiThread.interrupt();
+			aiThread.turnOff();
 			isAI = false;
 		}
 	}
 
 	@Override
-	public void gravityUpdate() {
-		// TODO Auto-generated method stub
-		
+	public void gravityUpdate() {}
+	
+	public GameInfo getRocketInfo() {
+		return new GameInfo
+		(
+			rocket.getX(), 
+			rocket.getY(), 
+			rocket.getDx(), 
+			rocket.getDy(), 
+			rocket.getFuelSpent()
+		);
 	}
 }

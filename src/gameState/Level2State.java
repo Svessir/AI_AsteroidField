@@ -71,6 +71,7 @@ public class Level2State extends Level1State {
 		
 		if(isInGravityField) {
 			vector.convertToUnitVector();
+			vector.mulitplyBy(0.5);
 			rocket.moveByVector(vector.x, vector.y);
 		}
 	}

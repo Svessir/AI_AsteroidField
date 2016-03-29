@@ -68,6 +68,14 @@ public class MCTS extends Thread {
 			fuelSpent = s.fuelSpent;
 		}
 		
+		public State(GameInfo info) {
+			x = info.rocketx;
+			y = info.rockety;
+			dx = info.rocketdx;
+			dy = info.rocketdy;
+			fuelSpent = info.fuelSpent;
+		}
+		
 		public ArrayList<Action> getLegalActions() {
 			ArrayList<Action> actions = new ArrayList<>();
 			
@@ -152,15 +160,13 @@ public class MCTS extends Thread {
 		}
 		
 		public boolean isTerminal() {
-			return world.target.getRectangle().contains(x, y);
+			return Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()) < 5;
 		}
 		
 		public double getErrorBetweenStates(State s) {
 			double error = 0.0;
 			error += Math.max(x, s.x) - Math.min(x, s.x);
 			error += Math.max(y, s.y) - Math.min(y, s.y);
-			error += Math.max(dx, s.dx) - Math.min(dx, s.dx);
-			error += Math.max(dy, s.dy) - Math.min(dy, s.dy);
 			return error;
 		}
 	}
@@ -191,15 +197,14 @@ public class MCTS extends Thread {
 			return bestChild();
 		}
 		
-		public Node expand() {
-			int index = rand.nextInt(unexploredActions.size());
-			Action action = unexploredActions.remove(index);
+		public void expand() {
+			if(children == null) children = new ArrayList<>();
 			
-			if(children == null) children = new ArrayList<Node>();
-			
-			Node child = new Node(state.getSuccessorState(action), action);
-			children.add(child);
-			return child;
+			for(Action action : unexploredActions) {
+				Node n = new Node(state.getSuccessorState(action), action);
+				n.simulate(maxDepth);
+				children.add(n);
+			}
 		}
 		
 		public double simulate(int depth) {
@@ -214,7 +219,7 @@ public class MCTS extends Thread {
 			return eval;
 		}
 		
-		public void update(double value) {
+		public void update() {
 			double sum = 0;
 			for(Node child : children) {
 				sum += child.eval;
@@ -246,8 +251,9 @@ public class MCTS extends Thread {
 	private Node root;
 	private Random rand = new Random();
 	private ConcurrentLinkedQueue<Move> queue;
+	private boolean isOn = true;
 	
-	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, ConcurrentLinkedQueue<Move> queue, PlayerBot bot) {
+	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, ConcurrentLinkedQueue<Move> queue) {
 		
 		// static objects
 		world = new World(info.target, info.boundaryRect, info.asteroids);
@@ -269,13 +275,12 @@ public class MCTS extends Thread {
 		this.searchTimeMillis = searchTimeMillis;
 		
 		this.queue = queue;
-		
 		initialDistance = Helper.calculateDistance(info.rocketx, info.rockety, world.target.getX(), info.target.getY());
 	}
 
 	@Override
 	public void run() {
-		while(!isInterrupted()) {
+		while(isOn) {
 			search();
 			
 			if(root.action == Action.THRUST)
@@ -299,17 +304,13 @@ public class MCTS extends Thread {
 			// selectedNode
 			Node node = selection(visited);
 			
-			// expansion
-			node = node.expand();
+			// expansion + simulation
+			node.expand();
 			numberE++;
-			
-			// simulation
-			double value = node.simulate(maxDepth);
-			//System.out.println(value);
 			
 			// back propagation
 			for(Node n : visited) {
-				n.update(value);
+				n.update();
 			}
 		}
 		System.out.println(numberE);
@@ -329,5 +330,9 @@ public class MCTS extends Thread {
 			visited.add(currentNode);
 		}
 		return currentNode;
+	}
+	
+	public void turnOff() {
+		isOn = false;
 	}
 }
