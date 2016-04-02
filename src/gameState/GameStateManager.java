@@ -117,7 +117,10 @@ public class GameStateManager {
 		Asteroid[] asteroids = {
 			new Asteroid(200, 30, 1),
 			new Asteroid(230, 60, 1),
-			new Asteroid(288, 90, 1),
+			new Asteroid(288, 70, 1),
+			new Asteroid(63, 126, 1),
+			new Asteroid(116, 203, 1),
+			new Asteroid(180, 140, 2)
 		};
 		return asteroids;
 	}

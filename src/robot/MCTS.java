@@ -106,7 +106,7 @@ public class MCTS extends Thread {
 		public Action getRandomLegalAction() {
 			int number = rand.nextInt(3);
 			
-			if(number == 0 && canThrust())
+			if(number == 0)
 				return Action.THRUST;
 			if(number == 1)
 				return Action.ROTATE_RIGHT;
@@ -137,6 +137,7 @@ public class MCTS extends Thread {
 			double oldDx = dx;
 			dx = Helper.rotateX(angle, dx, dy);
 			dy = Helper.rotateY(angle, oldDx, dy);
+			fuelSpent += 5.0;
 		}
 		
 		private void thrust() {
@@ -147,6 +148,7 @@ public class MCTS extends Thread {
 		private void move(double dx, double dy) {
 			x += dx;
 			y += dy;
+			if(!world.boundary.contains(x, y)) isCollision = true;
 		}
 		
 		@SuppressWarnings("unused")
@@ -177,7 +179,7 @@ public class MCTS extends Thread {
 			if(world.asteroids == null) return false;
 			
 			for(Asteroid asteroid : world.asteroids) {
-				if(Helper.calculateDistance(x, y, asteroid.getX(), asteroid.getY()) < ((asteroid.getWidth()/2.0) + 10.0)){
+				if(Helper.calculateDistance(x, y, asteroid.getX(), asteroid.getY()) <= (asteroid.getHeight() * 0.48 + 15.0)){
 					return true;
 				}
 			}
@@ -196,10 +198,12 @@ public class MCTS extends Thread {
 		private ArrayList<Node> children;
 		private ArrayList<Action> unexploredActions;
 		private double eval;
+		private double nodeVisits;
 		
 		public Node(State state, Action action) {
 			this.state = state;
 			this.action = action;
+			this.nodeVisits = 0;
 			unexploredActions = state.getLegalActions();
 		}
 		
@@ -208,7 +212,18 @@ public class MCTS extends Thread {
 		public boolean isFullyExpanded() { return unexploredActions.isEmpty(); }
 		
 		public Node selectChild() {
-			return bestChild();
+			Node best = children.get(0);
+			double bestEval = best.UCB(this);
+			
+			for(Node child : children) {
+				double ucb = child.UCB(this);
+				if(ucb > bestEval) {
+					best = child;
+					bestEval = ucb;
+				}
+			}
+			
+			return best;
 		}
 		
 		public void expand() {
@@ -233,11 +248,16 @@ public class MCTS extends Thread {
 			return eval;
 		}
 		
+		public double UCB(Node parent) {
+			return eval + epsilon * Math.sqrt(Math.log(parent.nodeVisits)/nodeVisits);
+		}
+		
 		public void update() {
 			double sum = 0;
 			for(Node child : children) {
 				sum += child.eval;
 			}
+			nodeVisits++;
 			eval = sum/children.size();
 		}
 		
@@ -266,6 +286,7 @@ public class MCTS extends Thread {
 	private Random rand = new Random();
 	private ConcurrentLinkedQueue<Move> queue;
 	private boolean isOn = true;
+	private double epsilon = 1e-6;
 	
 	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, ConcurrentLinkedQueue<Move> queue ) {
 		
@@ -327,7 +348,7 @@ public class MCTS extends Thread {
 				n.update();
 			}
 		}
-		//System.out.println(numberE);
+		System.out.println(numberE);
 		root = root.bestChild();
 		//System.out.println(root.state.isCollision);
 	}

@@ -25,7 +25,7 @@ public class Asteroid extends MapObject{
 		super(x, y, 30 * (int)weight, 30 * (int)weight);
 		this.weight = weight;
 		
-		collistionRadius = (height / 2.0) - 10.0;
+		collistionRadius = height/2.0 - height * 0.06;
 		
 		BufferedImage original;
 		try {
@@ -53,9 +53,7 @@ public class Asteroid extends MapObject{
 		
 		Rocket rocket = (Rocket) o;
 		double rocketPadding = rocket.getHeight() / 2.0;
-		double rocketX = rocket.getX() + (rocket.getDx() * rocketPadding);
-		double rocketY = rocket.getY() + (rocket.getDy() * rocketPadding);
-		return Helper.calculateDistance(rocketX, rocketY, x, y) < collistionRadius;
+		return Helper.calculateDistance(rocket.getX(), rocket.getY(), x, y) < collistionRadius + rocketPadding;
 	}
 
 	@Override
