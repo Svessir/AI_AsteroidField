@@ -99,18 +99,22 @@ public class MCTS extends Thread {
 		}
 		
 		public double evaluate() { 
-			double eval = (initialDistance - Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()))/fuelSpent; 
-			return isCollision ? -eval : eval;
+			return  (initialDistance - Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()))/fuelSpent;
 		}
 		
 		public Action getRandomLegalAction() {
-			int number = rand.nextInt(3);
-			
+			int number;
+			if(canThrust()) {
+				number = rand.nextInt(3);
+			}else{
+				number = rand.nextInt(2);
+			}
+
 			if(number == 0)
-				return Action.THRUST;
+				return Action.ROTATE_LEFT;
 			if(number == 1)
 				return Action.ROTATE_RIGHT;
-			return Action.ROTATE_LEFT;
+			return Action.THRUST;
 		}
 		
 		public void playAction( Action action ) {
@@ -160,6 +164,7 @@ public class MCTS extends Thread {
 			double ox = x, oy= y;
 			move(dx, dy);
 			boolean canThrust = world.boundary.contains(x, y);
+			canThrust = canThrust && !isCollision();
 			x = ox; y = oy;
 			return canThrust;
 		}
@@ -179,7 +184,7 @@ public class MCTS extends Thread {
 			if(world.asteroids == null) return false;
 			
 			for(Asteroid asteroid : world.asteroids) {
-				if(Helper.calculateDistance(x, y, asteroid.getX(), asteroid.getY()) <= (asteroid.getHeight() * 0.48 + 15.0)){
+				if(Helper.calculateDistance(x, y, asteroid.getX(), asteroid.getY()) <= (asteroid.getHeight() * 0.47 + 15.0)){
 					return true;
 				}
 			}
@@ -286,7 +291,7 @@ public class MCTS extends Thread {
 	private Random rand = new Random();
 	private ConcurrentLinkedQueue<Move> queue;
 	private boolean isOn = true;
-	private double epsilon = 1e-6;
+	private double epsilon = 0;
 	
 	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, ConcurrentLinkedQueue<Move> queue ) {
 		

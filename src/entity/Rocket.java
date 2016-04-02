@@ -32,7 +32,7 @@ public class Rocket extends MapObject{
 	// single rotation
 	private final double SINGLE_ROTATION = Math.toRadians(1);
 	
-	private final double fuelForThrust = 1.0;
+	private final double fuelForThrust = 1;
 	
 	public Rocket(double x, double y, double dx, double dy, Rectangle boundary) {
 		super(x, y, 30, 30);
