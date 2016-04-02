@@ -61,3 +61,7 @@ local.properties
 
 # Code Recommenders
 .recommenders/
+
+# Intellij stuff
+.idea
+AI_AsteroidField.iml
