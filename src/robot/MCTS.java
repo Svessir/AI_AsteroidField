@@ -54,6 +54,8 @@ public class MCTS extends Thread {
 		
 		// is collision
 		public boolean isCollision;
+		public boolean isGoal;
+
 		
 		private State (double x, double y, double dx, double dy, double fuelSpent) {
 			this.x = x;
@@ -62,6 +64,7 @@ public class MCTS extends Thread {
 			this.dy = dy;
 			this.fuelSpent = fuelSpent;
 			this.isCollision = isCollision();
+			this.isGoal = isGoal();
 		}
 		
 		public State(State s) {
@@ -99,7 +102,13 @@ public class MCTS extends Thread {
 		}
 		
 		public double evaluate() { 
-			return  (initialDistance - Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()))/fuelSpent;
+			double result = initialDistance - Helper.calculateDistance(x, y, world.target.getX(), world.target.getY())/fuelSpent;
+			if(isCollision){
+				result /= 2;
+			}else if(isGoal){
+				result = result * 1000;
+			}
+			return result;
 		}
 		
 		public Action getRandomLegalAction() {
@@ -141,7 +150,7 @@ public class MCTS extends Thread {
 			double oldDx = dx;
 			dx = Helper.rotateX(angle, dx, dy);
 			dy = Helper.rotateY(angle, oldDx, dy);
-			fuelSpent += 5.0;
+			fuelSpent += 20;
 		}
 		
 		private void thrust() {
@@ -153,6 +162,7 @@ public class MCTS extends Thread {
 			x += dx;
 			y += dy;
 			if(!world.boundary.contains(x, y)) isCollision = true;
+
 		}
 		
 		@SuppressWarnings("unused")
@@ -170,7 +180,7 @@ public class MCTS extends Thread {
 		}
 		
 		public boolean isTerminal() {
-			return isCollision || Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()) < 5;
+			return isCollision || isGoal;
 		}
 		
 		public double getErrorBetweenStates(State s) {
@@ -179,7 +189,14 @@ public class MCTS extends Thread {
 			error += Math.max(y, s.y) - Math.min(y, s.y);
 			return error;
 		}
-		
+		public boolean isGoal(){
+			if(Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()) < 25){
+				return true;
+			}
+
+			return false;
+		}
+
 		public boolean isCollision() {
 			if(world.asteroids == null) return false;
 			
@@ -201,15 +218,25 @@ public class MCTS extends Thread {
 		private final State state;
 		private final Action action;
 		private ArrayList<Node> children;
+		private Node parent;
 		private ArrayList<Action> unexploredActions;
 		private double eval;
 		private double nodeVisits;
+		private boolean goalNode = false;
+		private boolean visited = false;
 		
 		public Node(State state, Action action) {
 			this.state = state;
 			this.action = action;
 			this.nodeVisits = 0;
 			unexploredActions = state.getLegalActions();
+		}
+		public Node(State state, Action action, Node parent) {
+			this.state = state;
+			this.action = action;
+			this.nodeVisits = 0;
+			unexploredActions = state.getLegalActions();
+			this.parent = parent;
 		}
 		
 		public boolean isLeaf() { return children == null || children.isEmpty(); }
@@ -235,9 +262,11 @@ public class MCTS extends Thread {
 			if(children == null) children = new ArrayList<>();
 			
 			for(Action action : unexploredActions) {
-				Node n = new Node(state.getSuccessorState(action), action);
-				n.simulate(maxDepth);
-				children.add(n);
+				Node n = new Node(state.getSuccessorState(action), action, this);
+				if(!n.state.isCollision) {
+					n.simulate(maxDepth);
+					children.add(n);
+				}
 			}
 		}
 		
@@ -261,9 +290,18 @@ public class MCTS extends Thread {
 			double sum = 0;
 			for(Node child : children) {
 				sum += child.eval;
+				if(child.goalNode){
+					this.goalNode = true;
+
+				}
 			}
-			nodeVisits++;
-			eval = sum/children.size();
+
+			eval = sum;
+
+			
+			if(parent != null) {
+				parent.update();
+			}
 		}
 		
 		public Node bestChild() {
@@ -284,7 +322,7 @@ public class MCTS extends Thread {
 	private long searchTimeMillis;
 	private long startTime;
 	private double initialDistance;
-	private int maxDepth = 100;
+	private int maxDepth = 30;
 	private World world;
 	private TransitionModel transitionModel;
 	private Node root;
@@ -308,10 +346,10 @@ public class MCTS extends Thread {
 					info.rocketdy * tm.NUMBER_OF_ACTIONS_PER_TRANSITION,
 					info.fuelSpent
 				),
+				null,
 				null);
 		
 		transitionModel = tm;
-		
 		this.searchTimeMillis = searchTimeMillis;
 		
 		this.queue = queue;
@@ -338,20 +376,21 @@ public class MCTS extends Thread {
 	public void search() {
 		startTime = System.currentTimeMillis();
 		int numberE = 0;
+		List<Node> visited = new LinkedList<Node>();
+
 		while(isTime()) {
-			List<Node> visited = new LinkedList<Node>();
-			
 			// selectedNode
 			Node node = selection(visited);
-			
+
+
+
+
 			// expansion + simulation
 			node.expand();
 			numberE++;
 			
 			// back propagation
-			for(Node n : visited) {
-				n.update();
-			}
+			node.update();
 		}
 		System.out.println(numberE);
 		root = root.bestChild();
@@ -364,12 +403,13 @@ public class MCTS extends Thread {
 	
 	private Node selection(List<Node> visited) {
 		Node currentNode = root;
-		visited.add(root);
-		
-		while(!currentNode.isLeaf() && currentNode.isFullyExpanded()) {
-			currentNode = currentNode.selectChild();
-			visited.add(currentNode);
+		int i = 0;
+		while(currentNode.visited && i < maxDepth) {
+			i++;
+			currentNode = currentNode.bestChild();
 		}
+
+		currentNode.visited = true;
 		return currentNode;
 	}
 	
