@@ -25,6 +25,8 @@ public class GameStateManager {
 	public static final int LEVEL4STATE = 6;
 	public static final int LEVEL5STATE = 7;
 	public static final int LEVEL6STATE = 8;
+	public static final int LEVEL7STATE = 9;
+	public static final int LEVEL8STATE = 10;
 	
 	public GameStateManager(Rectangle boundaryRectangle) {
 		this.boundaryRectangle = boundaryRectangle;
@@ -40,6 +42,8 @@ public class GameStateManager {
 		gameStates.add(new Level1State(this, "Level 4", new Rocket(300, 20, 1, 0, boundaryRectangle), new Target(20, 220)));
 		gameStates.add(new Level2State(this, "Level 5", new Rocket(20, 20, 1, 0, boundaryRectangle), new Target(200, 200), getLevel5Asteroids()));
 		gameStates.add(new Level2State(this, "Level 6", new Rocket(20, 220, 1, 0, boundaryRectangle), new Target(300, 20), getLevel6Asteroids()));
+		gameStates.add(new Level2State(this, "Level 7", new Rocket(20, 220, 1, 0, boundaryRectangle), new Target(300,20), getLevel7Asteroids()));
+		gameStates.add(new Level2State(this, "Level 8", new Rocket(20, 220, 1, 0, boundaryRectangle), new Target(230,20), getLevel8Asteroids()));
 	}
 	
 	public void setState(int state) {
@@ -124,4 +128,39 @@ public class GameStateManager {
 		};
 		return asteroids;
 	}
+	
+	private Asteroid[] getLevel7Asteroids() {
+		Asteroid[] asteroids = {
+			new Asteroid(190, 50, 1),
+			new Asteroid(160, 80, 1),
+			new Asteroid(130, 110, 1),
+			new Asteroid(100, 140, 1),
+			new Asteroid(70, 170, 1),
+			new Asteroid(170, 190, 1),
+			new Asteroid(200, 160, 1),
+			new Asteroid(230, 130, 1),
+			new Asteroid(260, 100, 1)
+		};
+		
+		return asteroids;
+	}
+	
+	private Asteroid[] getLevel8Asteroids() {
+		Asteroid[] asteroids = {
+			new Asteroid(70, 190, 1),
+			new Asteroid(70, 160, 1),
+			new Asteroid(70, 130, 1),
+			new Asteroid(70, 100, 1),
+			new Asteroid(70, 70, 1),
+			new Asteroid(100, 70, 1),
+			new Asteroid(130, 70, 1),
+			new Asteroid(160, 70, 1),
+			new Asteroid(190, 70, 1),
+			new Asteroid(220, 70, 1),
+			new Asteroid(250, 70, 1)
+		};
+		
+		return asteroids;
+	}
+	
 }
