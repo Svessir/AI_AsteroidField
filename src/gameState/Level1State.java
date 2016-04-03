@@ -104,15 +104,18 @@ public class Level1State extends GameState{
 
 	@Override
 	public Results getResults() { 
-		return new Results(
-				gsm.boundaryRectangle.getCenterX(), 
-				gsm.boundaryRectangle.getCenterY(), 
-				150, 
-				100,
-				shortestDistance,
-				rocket.getDistanceTraveled()
-				+ rocket.calculateDistance(rocket.getX(), rocket.getY(), target.getX(), target.getY()),
-				rocket.getFuelSpent());
+		return new Results
+		(
+			gsm.boundaryRectangle.getCenterX(), 
+			gsm.boundaryRectangle.getCenterY(), 
+			150, 
+			100,
+			shortestDistance,
+			rocket.getDistanceTraveled()
+			+ rocket.calculateDistance(rocket.getX(), rocket.getY(), target.getX(), target.getY()),
+			rocket.getFuelSpent(),
+			true
+		);
 	}
 
 	@Override

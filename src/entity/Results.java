@@ -11,18 +11,22 @@ public class Results extends MapObject{
 	private String shortestDistance;
 	private String distanceTraveled;
 	private String fuelSpent;
-	private Color headerColor;
+	private Color failureHeaderColor;
+	private Color successHeaderColor;
 	private Font headerFont;
 	private Font font;
+	private boolean isSuccess;
 	
-	public Results(double x, double y, int width, int height, double shortestD, double travelD, double fuelSpent) {
+	public Results(double x, double y, int width, int height, double shortestD, double travelD, double fuelSpent, boolean isSuccess) {
 		super(x, y, width, height);
 		
 		this.shortestDistance = Double.toString(shortestD);
 		this.distanceTraveled = Double.toString(travelD);
 		this.fuelSpent = Double.toString(fuelSpent);
+		this.isSuccess = isSuccess;
 	
-		headerColor = new Color(128, 0, 0);
+		failureHeaderColor = new Color(128, 0, 0);
+		successHeaderColor = new Color(0, 128, 0);
 		headerFont = new Font("Century Gothic", Font.PLAIN, 16);
 		font = new Font("Arial", Font.PLAIN, 10);
 	}
@@ -38,9 +42,13 @@ public class Results extends MapObject{
 		g.setColor(Color.GRAY);
 		g.fill(r);
 		
-		g.setColor(headerColor);
 		g.setFont(headerFont);
-		g.drawString("Game Over!", 110, 90);
+		
+		String message = isSuccess ? "Success!" : "Failure!";
+		
+		Color headerColor = isSuccess ? successHeaderColor : failureHeaderColor;
+		g.setColor(headerColor);
+		g.drawString(message, 110, 90);
 		
 		g.setColor(Color.BLACK);
 		g.setFont(font);
