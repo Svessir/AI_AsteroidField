@@ -99,7 +99,7 @@ public class Level1State extends GameState{
 
 	@Override
 	public boolean isGameOver() {
-		return rocket.collides(target);
+		return target.collides(rocket);
 	}
 
 	@Override

@@ -9,6 +9,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import utility.Helper;
+
 public class Target extends MapObject{
 	
 	// image
@@ -45,7 +47,7 @@ public class Target extends MapObject{
 
 	@Override
 	public boolean collides(MapObject o) {
-		return false;
+		return Helper.calculateDistance(x, y, o.getX(), o.getY()) <= width;
 	}
 
 }

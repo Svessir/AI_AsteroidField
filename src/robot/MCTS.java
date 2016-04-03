@@ -53,7 +53,7 @@ public class MCTS extends Thread {
 		public double fuelSpent;
 		
 		// is collision
-		public boolean isCollision;
+		//public boolean isCollision;
 		
 		private State (double x, double y, double dx, double dy, double fuelSpent) {
 			this.x = x;
@@ -61,7 +61,6 @@ public class MCTS extends Thread {
 			this.dx = dx;
 			this.dy = dy;
 			this.fuelSpent = fuelSpent;
-			this.isCollision = isCollision();
 		}
 		
 		public State(State s) {
@@ -100,7 +99,7 @@ public class MCTS extends Thread {
 		
 		public double evaluate() { 
 			double e = (initialDistance - Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()))/fuelSpent;
-			return isCollision ? -e : e;
+			return isTerminal() ? Double.MAX_VALUE : e;
 		}
 		
 		public Action getRandomLegalAction() {
@@ -120,10 +119,8 @@ public class MCTS extends Thread {
 		
 		public void playAction( Action action ) {
 			
-			if(action == Action.THRUST){
+			if(action == Action.THRUST)
 				thrust();
-				isCollision = isCollision();
-			}
 			else if(action == Action.ROTATE_LEFT)
 				rotate_left();
 			else if(action == Action.ROTATE_RIGHT)
@@ -153,7 +150,6 @@ public class MCTS extends Thread {
 		private void move(double dx, double dy) {
 			x += dx;
 			y += dy;
-			if(!world.boundary.contains(x, y)) isCollision = true;
 		}
 		
 		@SuppressWarnings("unused")
@@ -164,14 +160,13 @@ public class MCTS extends Thread {
 		private boolean canThrust() {
 			double ox = x, oy= y;
 			move(dx, dy);
-			boolean canThrust = world.boundary.contains(x, y);
-			canThrust = canThrust && !isCollision();
+			boolean canThrust = world.boundary.contains(x, y) && !isCollision();
 			x = ox; y = oy;
 			return canThrust;
 		}
 		
 		public boolean isTerminal() {
-			return isCollision || Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()) < 5;
+			return Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()) < 5.0;
 		}
 		
 		public double getErrorBetweenStates(State s) {
@@ -263,12 +258,6 @@ public class MCTS extends Thread {
 		}
 		
 		public void update() {
-			/*double sum = 0;
-			for(Node child : children) {
-				sum += child.eval;
-			}
-			nodeVisits++;
-			eval = sum/children.size();*/
 			nodeVisits++;
 			eval = bestChild().eval;
 		}
@@ -336,9 +325,6 @@ public class MCTS extends Thread {
 				queue.add(new Move(KeyEvent.VK_LEFT, (int)transitionModel.NUMBER_OF_ACTIONS_PER_TRANSITION));
 			else if(root.action == Action.ROTATE_RIGHT)
 				queue.add(new Move(KeyEvent.VK_RIGHT, (int)transitionModel.NUMBER_OF_ACTIONS_PER_TRANSITION));
-			else {// NOOP
-				queue.add(new Move(Integer.MIN_VALUE, (int)transitionModel.NUMBER_OF_ACTIONS_PER_TRANSITION));
-			}
 		}
 	}
 	

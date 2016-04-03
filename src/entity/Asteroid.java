@@ -25,7 +25,8 @@ public class Asteroid extends MapObject{
 		super(x, y, 30 * (int)weight, 30 * (int)weight);
 		this.weight = weight;
 		
-		collistionRadius = height/2.0 - height * 0.06;
+		double halfHeight = height/2.0;
+		collistionRadius = halfHeight - halfHeight*0.50;
 		
 		BufferedImage original;
 		try {
