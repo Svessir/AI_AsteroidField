@@ -41,6 +41,8 @@ public class Level2State extends Level1State {
 		    aiThread = new PlayerBot(info);
 			aiThread.start();
 		}
+		
+		startTimeMillis = System.currentTimeMillis();
 	}
 	
 	@Override
@@ -94,7 +96,8 @@ public class Level2State extends Level1State {
 			shortestDistance,
 			rocket.getDistanceTraveled(),
 			rocket.getFuelSpent(),
-			false
+			false,
+			((double)(System.currentTimeMillis() - startTimeMillis))/1000.0
 		);
 	}
 }

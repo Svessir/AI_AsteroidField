@@ -16,15 +16,25 @@ public class Results extends MapObject{
 	private Font headerFont;
 	private Font font;
 	private boolean isSuccess;
+	private double time;
 	
-	public Results(double x, double y, int width, int height, double shortestD, double travelD, double fuelSpent, boolean isSuccess) {
+	public Results( double x, 
+					double y,
+					int width,
+					int height,
+					double shortestD,
+					double travelD,
+					double fuelSpent,
+					boolean isSuccess,
+					double time) {
 		super(x, y, width, height);
 		
 		this.shortestDistance = Double.toString(shortestD);
 		this.distanceTraveled = Double.toString(travelD);
 		this.fuelSpent = Double.toString(fuelSpent);
 		this.isSuccess = isSuccess;
-	
+		this.time = time;
+		
 		failureHeaderColor = new Color(128, 0, 0);
 		successHeaderColor = new Color(0, 128, 0);
 		headerFont = new Font("Century Gothic", Font.PLAIN, 16);
@@ -55,12 +65,13 @@ public class Results extends MapObject{
 		g.drawString("Shortest Distance: " + shortestDistance, 95, 110);
 		g.drawString("Travel Distance: " + distanceTraveled, 95, 120);
 		g.drawString("Fuel Spent: " + fuelSpent, 95, 130);
+		g.drawString("Time: " + time, 95, 140);
 		
 		g.setColor(Color.DARK_GRAY);
-		g.fillRect(130, 140, 50, 15);
+		g.fillRect(130, 150, 50, 15);
 		
 		g.setColor(Color.LIGHT_GRAY);
-		g.drawString("Enter", 140, 150);
+		g.drawString("Enter", 140, 160);
 	}
 
 }

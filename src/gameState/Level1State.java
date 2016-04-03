@@ -19,6 +19,7 @@ public class Level1State extends GameState{
 	protected double rocketInitialY;
 	protected double targetInitialX;
 	protected double targetInitialY;
+	protected long startTimeMillis;
 	
 	
 	public Level1State(GameStateManager gsm, String levelName ,Rocket r, Target t) {
@@ -64,6 +65,8 @@ public class Level1State extends GameState{
 		    aiThread = new PlayerBot(info);
 			aiThread.start();
 		}
+		
+		startTimeMillis = System.currentTimeMillis();
 	}
 
 	@Override
@@ -114,7 +117,8 @@ public class Level1State extends GameState{
 			rocket.getDistanceTraveled()
 			+ rocket.calculateDistance(rocket.getX(), rocket.getY(), target.getX(), target.getY()),
 			rocket.getFuelSpent(),
-			true
+			true,
+			((double)(System.currentTimeMillis() - startTimeMillis))/1000.0
 		);
 	}
 
