@@ -99,7 +99,8 @@ public class MCTS extends Thread {
 		}
 		
 		public double evaluate() { 
-			return  (initialDistance - Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()))/fuelSpent;
+			double e = (initialDistance - Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()))/fuelSpent;
+			return isCollision ? -e : e;
 		}
 		
 		public Action getRandomLegalAction() {
@@ -233,11 +234,15 @@ public class MCTS extends Thread {
 		
 		public void expand() {
 			if(children == null) children = new ArrayList<>();
-			
-			for(Action action : unexploredActions) {
-				Node n = new Node(state.getSuccessorState(action), action);
-				n.simulate(maxDepth);
-				children.add(n);
+			/*Action action = unexploredActions.remove(rand.nextInt(unexploredActions.size()));
+			Node child = new Node(state.getSuccessorState(action), action);
+			child.simulate(maxDepth);
+			children.add(child);*/
+			while(!unexploredActions.isEmpty()) {
+				Action action = unexploredActions.remove(0);
+				Node child = new Node(state.getSuccessorState(action), action);
+				child.simulate(maxDepth);
+				children.add(child);
 			}
 		}
 		
@@ -258,12 +263,14 @@ public class MCTS extends Thread {
 		}
 		
 		public void update() {
-			double sum = 0;
+			/*double sum = 0;
 			for(Node child : children) {
 				sum += child.eval;
 			}
 			nodeVisits++;
-			eval = sum/children.size();
+			eval = sum/children.size();*/
+			nodeVisits++;
+			eval = bestChild().eval;
 		}
 		
 		public Node bestChild() {
@@ -284,14 +291,14 @@ public class MCTS extends Thread {
 	private long searchTimeMillis;
 	private long startTime;
 	private double initialDistance;
-	private int maxDepth = 100;
+	private int maxDepth = 30;
 	private World world;
 	private TransitionModel transitionModel;
 	private Node root;
 	private Random rand = new Random();
 	private ConcurrentLinkedQueue<Move> queue;
 	private boolean isOn = true;
-	private double epsilon = 0;
+	private double epsilon = 10.0;
 	
 	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, ConcurrentLinkedQueue<Move> queue ) {
 		
@@ -349,9 +356,8 @@ public class MCTS extends Thread {
 			numberE++;
 			
 			// back propagation
-			for(Node n : visited) {
-				n.update();
-			}
+			for(int i = visited.size() - 1; i >= 0; i--)
+				visited.get(i).update();
 		}
 		System.out.println(numberE);
 		root = root.bestChild();
