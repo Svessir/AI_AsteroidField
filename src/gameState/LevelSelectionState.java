@@ -69,6 +69,10 @@ public class LevelSelectionState extends GameState{
 			gsm.setState(GameStateManager.LEVEL5STATE);
 		else if(currentChoice == 6)
 			gsm.setState(GameStateManager.LEVEL6STATE);
+		else if(currentChoice == 7)
+			gsm.setState(GameStateManager.LEVEL7STATE);
+		else if(currentChoice == 8)
+			gsm.setState(GameStateManager.LEVEL8STATE);
 	}
 
 	@Override

@@ -87,6 +87,7 @@ public class Rocket extends MapObject{
 			x = newX;
 			y = newY;
 		}
+		print();
 	}
 	
 	public double getDx() { return dx; }
