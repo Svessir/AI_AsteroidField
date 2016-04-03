@@ -85,13 +85,16 @@ public class Level2State extends Level1State {
 		if(super.isGameOver())
 			return super.getResults();
 		
-		return new Results(
-				gsm.boundaryRectangle.getCenterX(), 
-				gsm.boundaryRectangle.getCenterY(), 
-				150, 
-				100,
-				shortestDistance,
-				rocket.getDistanceTraveled(),
-				rocket.getFuelSpent());
+		return new Results
+		(
+			gsm.boundaryRectangle.getCenterX(), 
+			gsm.boundaryRectangle.getCenterY(), 
+			150, 
+			100,
+			shortestDistance,
+			rocket.getDistanceTraveled(),
+			rocket.getFuelSpent(),
+			false
+		);
 	}
 }
