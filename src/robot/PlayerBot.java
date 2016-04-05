@@ -8,7 +8,7 @@ public class PlayerBot extends Thread {
 	
 	private MCTS thread;
 	private Robot robot;
-	private long searchTimeMillis = 500;
+	private long searchTimeMillis = 200;
 	private long wait = 25;
 	private ConcurrentLinkedQueue<Move> queue;
 	private boolean isOn = true;

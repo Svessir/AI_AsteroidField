@@ -21,10 +21,10 @@ public class Background {
 		
 		try{
 			BufferedImage original = ImageIO.read(getClass().getResourceAsStream(s));
-			image = new BufferedImage(320, 240, original.getType());
+			image = new BufferedImage(GamePanel.WIDTH, GamePanel.HEIGHT, original.getType());
 			Graphics2D g = image.createGraphics();
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			g.drawImage(original, 0, 0, 320, 240, 0, 0, original.getWidth(),original.getHeight(), null);
+			g.drawImage(original, 0, 0, GamePanel.WIDTH, GamePanel.HEIGHT, 0, 0, original.getWidth(),original.getHeight(), null);
 			g.dispose();
 			moveScale = ms;
 		}

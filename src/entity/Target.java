@@ -47,7 +47,7 @@ public class Target extends MapObject{
 
 	@Override
 	public boolean collides(MapObject o) {
-		return Helper.calculateDistance(x, y, o.getX(), o.getY()) <= width;
+		return Helper.calculateDistance(x, y, o.getX(), o.getY()) <= width + 5;
 	}
 
 }

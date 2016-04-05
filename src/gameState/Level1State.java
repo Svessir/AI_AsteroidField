@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import entity.Results;
 import entity.Rocket;
 import entity.Target;
+import main.GamePanel;
 import robot.GameInfo;
 import robot.PlayerBot;
 import tileMap.Background;
@@ -110,9 +111,9 @@ public class Level1State extends GameState{
 		return new Results
 		(
 			gsm.boundaryRectangle.getCenterX(), 
-			gsm.boundaryRectangle.getCenterY(), 
-			150, 
-			100,
+			gsm.boundaryRectangle.getCenterY(),
+				200,
+			200,
 			shortestDistance,
 			rocket.getDistanceTraveled()
 			+ rocket.calculateDistance(rocket.getX(), rocket.getY(), target.getX(), target.getY()),

@@ -6,6 +6,7 @@ import entity.Asteroid;
 import entity.Results;
 import entity.Rocket;
 import entity.Target;
+import main.GamePanel;
 import robot.GameInfo;
 import robot.PlayerBot;
 
@@ -90,9 +91,9 @@ public class Level2State extends Level1State {
 		return new Results
 		(
 			gsm.boundaryRectangle.getCenterX(), 
-			gsm.boundaryRectangle.getCenterY(), 
-			150, 
-			100,
+			gsm.boundaryRectangle.getCenterY(),
+				200,
+			200,
 			shortestDistance,
 			rocket.getDistanceTraveled(),
 			rocket.getFuelSpent(),

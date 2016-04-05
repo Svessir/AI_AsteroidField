@@ -51,6 +51,8 @@ public class MCTS extends Thread {
 		
 		// fuel
 		public double fuelSpent;
+
+		public boolean goal;
 		
 		// is collision
 		//public boolean isCollision;
@@ -99,7 +101,13 @@ public class MCTS extends Thread {
 		
 		public double evaluate() { 
 			double e = (initialDistance - Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()))/fuelSpent;
-			return isTerminal() ? Double.MAX_VALUE : e;
+			if(isCollision()){
+				e = e - 100;
+			}
+			else if(isTerminal()){
+				e = e + 1000 + Helper.calculateDistance(x, y, world.target.getX(), world.target.getY());
+			}
+			return e;
 		}
 		
 		public Action getRandomLegalAction() {
@@ -166,7 +174,7 @@ public class MCTS extends Thread {
 		}
 		
 		public boolean isTerminal() {
-			return Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()) < 5.0;
+			return Helper.calculateDistance(x, y, world.target.getX(), world.target.getY()) < 3.0;
 		}
 		
 		public double getErrorBetweenStates(State s) {
@@ -214,7 +222,7 @@ public class MCTS extends Thread {
 		
 		public Node selectChild() {
 			Node best = children.get(0);
-			double bestEval = best.UCB(this);
+			double bestEval = best.UCB(best);
 			
 			for(Node child : children) {
 				double ucb = child.UCB(this);
@@ -246,10 +254,11 @@ public class MCTS extends Thread {
 			int i;
 			for(i = 0; i < depth; i++) {
 				currentState.playAction(currentState.getRandomLegalAction());
-				if(currentState.isTerminal()) break; 
+				if(currentState.isTerminal() || currentState.isCollision()) break;
 			}
 			
 			eval = currentState.evaluate();
+
 			return eval;
 		}
 		
@@ -280,14 +289,14 @@ public class MCTS extends Thread {
 	private long searchTimeMillis;
 	private long startTime;
 	private double initialDistance;
-	private int maxDepth = 30;
+	private int maxDepth = 50;
 	private World world;
 	private TransitionModel transitionModel;
 	private Node root;
 	private Random rand = new Random();
 	private ConcurrentLinkedQueue<Move> queue;
 	private boolean isOn = true;
-	private double epsilon = 10.0;
+	private double epsilon = Math.sqrt(2);
 	
 	public MCTS(GameInfo info, TransitionModel tm, long searchTimeMillis, ConcurrentLinkedQueue<Move> queue ) {
 		

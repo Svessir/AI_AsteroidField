@@ -27,6 +27,7 @@ public class GameStateManager {
 	public static final int LEVEL6STATE = 8;
 	public static final int LEVEL7STATE = 9;
 	public static final int LEVEL8STATE = 10;
+	public static final int LEVEL9STATE = 11;
 	
 	public GameStateManager(Rectangle boundaryRectangle) {
 		this.boundaryRectangle = boundaryRectangle;
@@ -44,6 +45,7 @@ public class GameStateManager {
 		gameStates.add(new Level2State(this, "Level 6", new Rocket(20, 220, 1, 0, boundaryRectangle), new Target(300, 20), getLevel6Asteroids()));
 		gameStates.add(new Level2State(this, "Level 7", new Rocket(20, 220, 1, 0, boundaryRectangle), new Target(300,20), getLevel7Asteroids()));
 		gameStates.add(new Level2State(this, "Level 8", new Rocket(20, 220, 1, 0, boundaryRectangle), new Target(230,20), getLevel8Asteroids()));
+		gameStates.add(new Level2State(this, "Level 9", new Rocket(20, 20, 1, 0, boundaryRectangle), new Target(400,180), getLevel9Asteroids()));
 	}
 	
 	public void setState(int state) {
@@ -159,7 +161,44 @@ public class GameStateManager {
 			new Asteroid(220, 70, 1),
 			new Asteroid(250, 70, 1)
 		};
-		
+
+
+
+		return asteroids;
+	}
+
+	private Asteroid[] getLevel9Asteroids() {
+		Asteroid[] asteroids = {
+				new Asteroid(20, 190, 1),
+				new Asteroid(60, 160, 1),
+				new Asteroid(450, 330, 1),
+				new Asteroid(160, 300, 1),
+				new Asteroid(60, 20, 1),
+				new Asteroid(275, 200, 3),
+				new Asteroid(275, 120, 3),
+				new Asteroid(200, 275, 1),
+				new Asteroid(160, 70, 1),
+				new Asteroid(190, 70, 1),
+				new Asteroid(220, 70, 1),
+				new Asteroid(250, 70, 1),
+
+				new Asteroid(500, 300, 2),
+				new Asteroid(120, 120, 1),
+				new Asteroid(100, 170, 1),
+				new Asteroid(600, 450, 1),
+				new Asteroid(540, 450, 1),
+				new Asteroid(182, 30, 2),
+
+				new Asteroid(320, 240, 1),
+				new Asteroid(180, 160, 1),
+
+
+
+
+		};
+
+
+
 		return asteroids;
 	}
 	

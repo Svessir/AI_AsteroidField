@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 import entity.Results;
+import main.Game;
+import main.GamePanel;
 import tileMap.Background;
 
 public class MenuState extends GameState {
@@ -53,14 +55,14 @@ public class MenuState extends GameState {
 		// draw title
 		g.setColor(titleColor);
 		g.setFont(titleFont);
-		g.drawString("Asteroid Field", 80, 70);
+		g.drawString("Asteroid Field", GamePanel.WIDTH/2 - 80, GamePanel.HEIGHT/2 - 60);
 		
 		// draw menu options
 		g.setFont(font);
 		for(int i = 0; i < options.length; i++) {
 			Color color = i == currentChoice ? Color.PINK : Color.RED;
 			g.setColor(color);
-			g.drawString(options[i], 145, 140 + i * 15);
+			g.drawString(options[i], GamePanel.WIDTH/2 - 20, GamePanel.HEIGHT/2 + i * 15);
 		}
 	}
 	

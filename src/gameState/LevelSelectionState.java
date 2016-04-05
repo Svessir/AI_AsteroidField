@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import entity.Results;
+import main.GamePanel;
 import tileMap.Background;
 
 public class LevelSelectionState extends GameState{
@@ -49,7 +50,7 @@ public class LevelSelectionState extends GameState{
 		for(int i = 0; i < levels.size(); i++) {
 			Color color = i == currentChoice ? Color.PINK : Color.RED;
 			g.setColor(color);
-			g.drawString(levels.get(i), 145, 20 + i * 15);
+			g.drawString(levels.get(i), GamePanel.WIDTH/2 - 20, 150  + i * 15);
 		}
 	}
 	
@@ -73,6 +74,8 @@ public class LevelSelectionState extends GameState{
 			gsm.setState(GameStateManager.LEVEL7STATE);
 		else if(currentChoice == 8)
 			gsm.setState(GameStateManager.LEVEL8STATE);
+		else if(currentChoice == 9)
+			gsm.setState(GameStateManager.LEVEL9STATE);
 	}
 
 	@Override

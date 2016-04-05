@@ -1,5 +1,7 @@
 package entity;
 
+import main.GamePanel;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -58,20 +60,25 @@ public class Results extends MapObject{
 		
 		Color headerColor = isSuccess ? successHeaderColor : failureHeaderColor;
 		g.setColor(headerColor);
-		g.drawString(message, 110, 90);
-		
+
+		///Fine tuning of text variable
+		int width = GamePanel.WIDTH/2 - 50;
+
+		g.drawString(message, width + 20, 200);
+
 		g.setColor(Color.BLACK);
 		g.setFont(font);
-		g.drawString("Shortest Distance: " + shortestDistance, 95, 110);
-		g.drawString("Travel Distance: " + distanceTraveled, 95, 120);
-		g.drawString("Fuel Spent: " + fuelSpent, 95, 130);
-		g.drawString("Time: " + time, 95, 140);
+
+		g.drawString("Shortest Distance: " + shortestDistance, width, GamePanel.HEIGHT/2);
+		g.drawString("Travel Distance: " + distanceTraveled, width, GamePanel.HEIGHT/2 + 10);
+		g.drawString("Fuel Spent: " + fuelSpent, width, GamePanel.HEIGHT/2 + 20);
+		g.drawString("Time: " + time, width, GamePanel.HEIGHT/2 + 30);
 		
 		g.setColor(Color.DARK_GRAY);
-		g.fillRect(130, 150, 50, 15);
-		
+		g.fillRect(width + 25, GamePanel.HEIGHT/2 + 60, 70, 20);
+
 		g.setColor(Color.LIGHT_GRAY);
-		g.drawString("Enter", 140, 160);
+		g.drawString("Enter", width + 35, GamePanel.HEIGHT/2 + 70);
 	}
 
 }
